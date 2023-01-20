@@ -1,11 +1,14 @@
 public class MainApplication {
 
-    private boolean isLoggedIn = true;
+    private boolean isLoggedIn = false;
+
     public void Start(){
+        ApplicationInterface applicationInterface = new ApplicationInterface();
         if (isLoggedIn){
-            SignUpPage signUpPage = new SignUpPage();
+            System.out.println("User is logged in");
         }else {
-            LogInPage loginPage = new LogInPage();
+            applicationInterface.showLogInPage();
+            System.out.println("User is not logged in");
         }
     }
 
