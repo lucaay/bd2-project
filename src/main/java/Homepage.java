@@ -4,8 +4,8 @@ import java.awt.event.ActionListener;
 
 public class Homepage {
     JPanel homePageParentPanel;
-    private JPanel dataPanel;
     private JPanel propertiesPanel;
+    private JPanel dataPanel;
     private JPanel filtersPanel;
     private JPanel buttonsPanel;
     private JPanel cartPanel;
@@ -30,6 +30,10 @@ public class Homepage {
     private JButton cartRemoveAllItemsButton;
     private JButton cartBuyButton;
     private JButton cautaProduseButton;
+    private JScrollPane cartScrollPane;
+    private JScrollPane dataScrollPane;
+    private JTable dataTable;
+    private JLabel propertiesTitleLabel;
 
 
     public Homepage(ApplicationInterface applicationInterface) {
