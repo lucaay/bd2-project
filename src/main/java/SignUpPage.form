@@ -179,7 +179,6 @@
             </constraints>
             <properties>
               <model>
-                <item value=""/>
                 <item value="Administrator"/>
                 <item value="Client"/>
               </model>
