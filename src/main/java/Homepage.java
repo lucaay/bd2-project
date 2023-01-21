@@ -4,8 +4,8 @@ import java.awt.event.ActionListener;
 
 public class Homepage {
     JPanel homePageParentPanel;
-    private JPanel propertiesPanel;
     private JPanel dataPanel;
+    private JPanel propertiesPanel;
     private JPanel filtersPanel;
     private JPanel buttonsPanel;
     private JPanel cartButtonPanel;
