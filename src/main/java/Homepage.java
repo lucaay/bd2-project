@@ -8,7 +8,7 @@ public class Homepage {
     private JPanel propertiesPanel;
     private JPanel filtersPanel;
     private JPanel buttonsPanel;
-    private JPanel cartButtonPanel;
+    private JPanel cartPanel;
     private JButton backToLoginPage;
     private JButton configuratorButton;
     private JButton addButton;
@@ -22,6 +22,13 @@ public class Homepage {
     private JRadioButton nameSearchButton;
     private JRadioButton idRadioButton;
     private JRadioButton componentTypeRadioButton;
+    private JTable cartTable;
+    private JButton addToCartButton;
+    private JButton deleteFromCartButton;
+    private JLabel cartPriceLabel;
+    private JLabel cartTitleLabel;
+    private JButton cartRemoveAllItemsButton;
+    private JButton cartBuyButton;
 
 
     public Homepage(ApplicationInterface applicationInterface) {
