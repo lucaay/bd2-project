@@ -29,6 +29,7 @@ public class Homepage {
     private JLabel cartTitleLabel;
     private JButton cartRemoveAllItemsButton;
     private JButton cartBuyButton;
+    private JButton cautaProduseButton;
 
 
     public Homepage(ApplicationInterface applicationInterface) {
