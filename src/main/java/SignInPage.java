@@ -16,7 +16,7 @@ public class SignInPage {
         singInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Sign in button clicked");
+                applicationInterface.showHomePage();
             }
         });
         createAccountButton.addActionListener(new ActionListener() {
