@@ -181,6 +181,8 @@ public class Homepage {
                 maxMemoryField.setVisible(true);
                 memoryFreqLabel.setVisible(true);
                 memoryFreqField.setVisible(true);
+                chipsetMakerLabel.setVisible(true);
+                chipsetComboBox.setVisible(true);
 
                 break;
             case "Placa video":
@@ -211,14 +213,84 @@ public class Homepage {
         }
     }
 
+    private void disableAllFields() {
+        nameField.setEnabled(false);
+        memorySizeField.setEnabled(false);
+        maxWriteField.setEnabled(false);
+        maxReadField.setEnabled(false);
+        capacityField.setEnabled(false);
+        powerField.setEnabled(false);
+        numberOfCoresField.setEnabled(false);
+        freqField.setEnabled(false);
+        chipsetComboBox.setEnabled(false);
+        memoryTypeComboBox.setEnabled(false);
+        modulationCheckBox.setEnabled(false);
+        ssdTypeComboBox.setEnabled(false);
+        coolingSystemComboBox.setEnabled(false);
+        socketField.setEnabled(false);
+        maxMemoryField.setEnabled(false);
+        slotsNumberField.setEnabled(false);
+        memoryFreqField.setEnabled(false);
+        seriesField.setEnabled(false);
+        memoryEfectiveFreqField.setEnabled(false);
+    }
+    private void enableAllFields() {
+        nameField.setEnabled(true);
+        memorySizeField.setEnabled(true);
+        maxWriteField.setEnabled(true);
+        maxReadField.setEnabled(true);
+        capacityField.setEnabled(true);
+        powerField.setEnabled(true);
+        numberOfCoresField.setEnabled(true);
+        freqField.setEnabled(true);
+        chipsetComboBox.setEnabled(true);
+        memoryTypeComboBox.setEnabled(true);
+        modulationCheckBox.setEnabled(true);
+        ssdTypeComboBox.setEnabled(true);
+        coolingSystemComboBox.setEnabled(true);
+        socketField.setEnabled(true);
+        maxMemoryField.setEnabled(true);
+        slotsNumberField.setEnabled(true);
+        memoryFreqField.setEnabled(true);
+        seriesField.setEnabled(true);
+        memoryEfectiveFreqField.setEnabled(true);
+    }
+
     public Homepage(ApplicationInterface applicationInterface) {
         hideAllProperties();
-//        showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
-        showProperties("Stocare SSD");
+        showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
         backToLoginPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 applicationInterface.showLogInPage();
+            }
+        });
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableAllFields();
+                saveButton.setEnabled(true);
+                addButton.setEnabled(false);
+                modifyButton.setEnabled(false);
+            }
+        });
+        modifyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableAllFields();
+                saveButton.setEnabled(true);
+                addButton.setEnabled(false);
+                modifyButton.setEnabled(false);
+            }
+        });
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                disableAllFields();
+                saveButton.setEnabled(false);
+                addButton.setEnabled(true);
+                modifyButton.setEnabled(true);
+                showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
             }
         });
     }
