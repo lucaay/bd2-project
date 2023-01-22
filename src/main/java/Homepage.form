@@ -64,7 +64,7 @@
               <text value="Producator Chipset"/>
             </properties>
           </component>
-          <component id="3abe3" class="javax.swing.JLabel" binding="cpuSocketLabel">
+          <component id="3abe3" class="javax.swing.JLabel" binding="socketLabel">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -192,7 +192,7 @@
               <text value="Scriere maxima"/>
             </properties>
           </component>
-          <component id="37e7e" class="javax.swing.JLabel" binding="modLabel">
+          <component id="37e7e" class="javax.swing.JLabel" binding="modulationLabel">
             <constraints>
               <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -354,6 +354,11 @@
             </constraints>
             <properties>
               <enabled value="false"/>
+              <model>
+                <item value="AMD"/>
+                <item value="NVIDIA"/>
+                <item value="INTEL"/>
+              </model>
             </properties>
           </component>
           <component id="be1c2" class="javax.swing.JComboBox" binding="memoryTypeComboBox">
@@ -367,7 +372,7 @@
                 <item value="DDR3"/>
                 <item value="DDR4"/>
                 <item value="DDR5"/>
-                <item value="DDR6"/>
+                <item value="GDDR6"/>
               </model>
             </properties>
           </component>
