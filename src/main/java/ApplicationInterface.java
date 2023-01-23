@@ -6,6 +6,7 @@ public class ApplicationInterface {
     JFrame applicationFrame = new JFrame("BD2 Project");
     SignInPage signInPage = new SignInPage(this);
     SignUpPage signUpPage = new SignUpPage(this);
+    Homepage homepage = new Homepage(this);
 
     public ApplicationInterface() {
         applicationFrame.setContentPane(applicationPanel);
@@ -20,6 +21,10 @@ public class ApplicationInterface {
     }
     public void showLogInPage(){
         applicationFrame.setContentPane(signInPage.signInParentPanel);
+        applicationFrame.pack();
+    }
+    public void showHomePage(){
+        applicationFrame.setContentPane(homepage.homePageParentPanel);
         applicationFrame.pack();
     }
 }
