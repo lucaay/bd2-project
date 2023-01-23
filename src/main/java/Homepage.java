@@ -349,6 +349,12 @@ public class Homepage {
                 }
             }
         });
+        viewClientsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                applicationInterface.showClientsAndReceiptsPage();
+            }
+        });
     }
 
 }
