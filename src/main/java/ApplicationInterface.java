@@ -7,6 +7,7 @@ public class ApplicationInterface {
     SignInPage signInPage = new SignInPage(this);
     SignUpPage signUpPage = new SignUpPage(this);
     Homepage homepage = new Homepage(this);
+    ClientsAndReceiptsPage clientsAndReceiptsPage = new ClientsAndReceiptsPage(this);
 
     public ApplicationInterface() {
         applicationFrame.setContentPane(applicationPanel);
@@ -25,6 +26,11 @@ public class ApplicationInterface {
     }
     public void showHomePage(){
         applicationFrame.setContentPane(homepage.homePageParentPanel);
+        applicationFrame.pack();
+    }
+
+    public void showClientsAndReceiptsPage(){
+        applicationFrame.setContentPane(clientsAndReceiptsPage.clientsAndReceiptsParentPanel);
         applicationFrame.pack();
     }
 }
