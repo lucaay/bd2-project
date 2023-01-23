@@ -4,10 +4,9 @@ import net.minidev.json.JSONObject;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class ClientsAndReceiptsPage {
@@ -63,8 +62,12 @@ public class ClientsAndReceiptsPage {
     private JLabel numberOfReceiptsLabel;
     private JButton saveClientButton;
     LocationData locationData = new LocationData();
+    DefaultTableModel clientTabelModel = (DefaultTableModel) clientDataTable.getModel();
+    DefaultTableModel receiptTabelModel = (DefaultTableModel) receiptDataTable.getModel();
 
     public ClientsAndReceiptsPage(ApplicationInterface applicationInterface) {
+        clientDataTable.setDefaultEditor(Object.class, null);
+        receiptDataTable.setDefaultEditor(Object.class, null);
         stateComboBox.getModel().setSelectedItem("Selecteaza judetul");
         hideAllProperties();
         addDataToClientTable();
@@ -204,6 +207,8 @@ public class ClientsAndReceiptsPage {
 
             }
         });
+        clientDataTable.addComponentListener(new ComponentAdapter() {
+        });
     }
 
     private void hideAllProperties() {
@@ -246,29 +251,34 @@ public class ClientsAndReceiptsPage {
 
 
     private void addDataToClientTable() {
-        DefaultTableModel model = (DefaultTableModel) clientDataTable.getModel();
-        model.setRowCount(0);
-        Object[] headerObject = {"ID", "Nume", "Prenume", "Email", "Telefon", "Judet", "Oras", "Adresa"};
-        model.addColumn(headerObject);
+        clientTabelModel.setRowCount(0);
+        Object[] headerObject = new String[] {
+                "ID", "Nume", "Prenume", "Email", "Telefon", "Judet", "Oras", "Adresa"
+        };
+
+        for (int i = 0; i < headerObject.length; i++){
+            clientTabelModel.addColumn(headerObject[i]);
+        }
         Object[][] rowDataObject = {
                 {"1", "Ion", "Popescu", "test@email.com", "0722222222", "Bucuresti", "Sector 2", "Str. Test 1"},
                 {"2", "Gion", "aLECU", "test2@email.com", "0722234222", "gALATI", "tECUCI", "Str. Test 2"},
         };
         for (int i = 0; i < rowDataObject.length; i++){
-            model.addRow(rowDataObject);
+            clientTabelModel.addRow(rowDataObject[i]);
         }
     }
     private void addDataToReceiptTable() {
-        DefaultTableModel model = (DefaultTableModel) receiptDataTable.getModel();
-        model.setRowCount(0);
+        receiptTabelModel.setRowCount(0);
         Object[] headerObject = {"ID", "ID Client", "Data", "Total"};
-        model.addColumn(headerObject);
+        for (int i = 0; i < headerObject.length; i++){
+            receiptTabelModel.addColumn(headerObject[i]);
+        }
         Object[][] rowDataObject = {
                 {"1", "256", "2020-01-01", "100"},
                 {"2", "354", "2020-01-02", "200"},
         };
         for (int i = 0; i < rowDataObject.length; i++){
-            model.addRow(rowDataObject);
+            receiptTabelModel.addRow(rowDataObject[i]);
         }
     }
 }
