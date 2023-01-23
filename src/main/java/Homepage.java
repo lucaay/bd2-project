@@ -10,7 +10,7 @@ public class Homepage {
     private JPanel buttonsPanel;
     private JPanel cartPanel;
     private JButton backToLoginPage;
-    private JButton configuratorButton;
+    private JButton viewClientsButton;
     private JButton addButton;
     private JButton modifyButton;
     private JButton saveButton;
@@ -29,7 +29,7 @@ public class Homepage {
     private JLabel cartTitleLabel;
     private JButton cartRemoveAllItemsButton;
     private JButton cartBuyButton;
-    private JButton cautaProduseButton;
+    private JButton searchProductsButton;
     private JScrollPane cartScrollPane;
     private JScrollPane dataScrollPane;
     private JTable dataTable;
@@ -291,6 +291,62 @@ public class Homepage {
                 addButton.setEnabled(true);
                 modifyButton.setEnabled(true);
                 showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
+            }
+        });
+        containsRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    startsWithRadioButton.setSelected(false);
+            }
+        });
+        startsWithRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                    containsRadioButton.setSelected(false);
+            }
+        });
+        nameSearchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                idRadioButton.setSelected(false);
+                componentTypeRadioButton.setSelected(false);
+            }
+        });
+        idRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nameSearchButton.setSelected(false);
+                componentTypeRadioButton.setSelected(false);
+            }
+        });
+        componentTypeRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nameSearchButton.setSelected(false);
+                idRadioButton.setSelected(false);
+            }
+        });
+        allDataCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(allDataCheckBox.isSelected()) {
+                    nameSearchButton.setEnabled(false);
+                    idRadioButton.setEnabled(false);
+                    componentTypeRadioButton.setEnabled(false);
+                    findByWordField.setEnabled(false);
+                    containsRadioButton.setEnabled(false);
+                    startsWithRadioButton.setEnabled(false);
+                    searchProductsButton.setEnabled(false);
+                }
+                else {
+                    nameSearchButton.setEnabled(true);
+                    idRadioButton.setEnabled(true);
+                    componentTypeRadioButton.setEnabled(true);
+                    findByWordField.setEnabled(true);
+                    containsRadioButton.setEnabled(true);
+                    startsWithRadioButton.setEnabled(true);
+                    searchProductsButton.setEnabled(true);
+                }
             }
         });
     }
