@@ -44,12 +44,12 @@ public class ClientsAndReceiptsPage {
     private JButton modifyClientButton;
     private JPanel filtersPanel;
     private JCheckBox allDataCheckBox;
-    private JRadioButton containsRadioButton;
-    private JTextField findByWordField;
-    private JLabel findByWordLabel;
-    private JRadioButton startsWithRadioButton;
-    private JRadioButton alphabeticalOrderButton;
-    private JRadioButton idRadioButton;
+    private JRadioButton containsClientsRadioButton;
+    private JTextField findByWordClientsField;
+    private JLabel searchClientsLabel;
+    private JRadioButton startsWithClientsRadioButton;
+    private JRadioButton alphabeticalOrderClientsRadioButton;
+    private JRadioButton alphabeticalReverseOrderClientsRadioButton;
     private JComboBox stateComboBox;
     private JComboBox cityComboBox;
     private JTextField nameField;
@@ -59,12 +59,33 @@ public class ClientsAndReceiptsPage {
     private JButton saveClientButton;
     private JRadioButton receiptRadioButton;
     private JRadioButton clientRadioButton;
+    private JLabel searchReceiptsLabel;
+    private JTextArea receiptProductsTextArea;
+    private JLabel receiptProductsLabel;
+    private JRadioButton containsReceiptRadioButton;
+    private JRadioButton startsWithReceiptRadioButton;
+    private JTextField findByWordReceiptsField;
+    private JRadioButton idOrderReceiptsRadioButton;
+    private JRadioButton idReverseOrderReceiptsRadioButton;
     LocationData locationData = new LocationData();
     DefaultTableModel clientTableModel = (DefaultTableModel) clientDataTable.getModel();
     DefaultTableModel receiptTableModel = (DefaultTableModel) receiptDataTable.getModel();
-    ButtonGroup tableTypeButtonGroup = new ButtonGroup();
-    ButtonGroup filterTypeButtonGroup = new ButtonGroup();
-    ButtonGroup orderTypeButtonGroup = new ButtonGroup();
+    ButtonGroup tableTypeClientsButtonGroup = new ButtonGroup();
+    ButtonGroup filterTypeClientsButtonGroup = new ButtonGroup();
+    ButtonGroup orderTypeClientsButtonGroup = new ButtonGroup();
+    ButtonGroup tableTypeReceiptsButtonGroup = new ButtonGroup();
+    ButtonGroup filterTypeReceiptsButtonGroup = new ButtonGroup();
+    ButtonGroup orderTypeReceiptsButtonGroup = new ButtonGroup();
+
+    Object[][] clientsRowDataObject = {
+            {"1", "Ion", "Popescu", "test@email.com", "0722222222", "Bucuresti", "Sector 2", "Str. Test 1"},
+            {"2", "Gion", "aLECU", "test2@email.com", "0722234222", "gALATI", "tECUCI", "Str. Test 2"},
+            {"3", "alex", "munteanu", "test3@email.com", "07222223232", "brasov", "centru", "Str. Test 3"},
+    };
+    Object[][] receiptsRowDataObject = {
+            {"1", "256", "2020-01-01", "100"},
+            {"2", "354", "2020-01-02", "200"},
+    };
 
     public ClientsAndReceiptsPage(ApplicationInterface applicationInterface) {
         clientDataTable.setDefaultEditor(Object.class, null);
@@ -74,6 +95,7 @@ public class ClientsAndReceiptsPage {
         addHeadersToClientTable();
         addHeadersToReceiptTable();
         createButtonGroups();
+
 
 
         JSONArray stateData = locationData.getStateData();
@@ -107,26 +129,24 @@ public class ClientsAndReceiptsPage {
         allDataCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (allDataCheckBox.isSelected()) {
-                    containsRadioButton.setEnabled(false);
-                    startsWithRadioButton.setEnabled(false);
-                    findByWordField.setEnabled(false);
-                    idRadioButton.setEnabled(false);
-                    alphabeticalOrderButton.setEnabled(false);
+                    disableReceiptFilterProperties();
+                    disableClientFilterProperties();
                     receiptRadioButton.setEnabled(false);
                     clientRadioButton.setEnabled(false);
-                    filterTypeButtonGroup.clearSelection();
-                    orderTypeButtonGroup.clearSelection();
-                    tableTypeButtonGroup.clearSelection();
-                    findByWordField.setText("");
+                    filterTypeClientsButtonGroup.clearSelection();
+                    orderTypeClientsButtonGroup.clearSelection();
+                    tableTypeClientsButtonGroup.clearSelection();
+                    filterTypeReceiptsButtonGroup.clearSelection();
+                    orderTypeReceiptsButtonGroup.clearSelection();
+                    tableTypeReceiptsButtonGroup.clearSelection();
+                    modifyClientButton.setEnabled(false);
+                    modifyReceiptButton.setEnabled(false);
+                    saveClientButton.setEnabled(false);
+                    saveReceiptButton.setEnabled(false);
+                    findByWordClientsField.setText("");
                     addDataToClientTable();
                     addDataToReceiptTable();
-                } else {
-                    containsRadioButton.setEnabled(true);
-                    startsWithRadioButton.setEnabled(true);
-                    findByWordField.setEnabled(true);
-                    idRadioButton.setEnabled(true);
-                    alphabeticalOrderButton.setEnabled(true);
+                if (!allDataCheckBox.isSelected()) {
                     receiptRadioButton.setEnabled(true);
                     clientRadioButton.setEnabled(true);
                     clientTableModel.setRowCount(0);
@@ -142,25 +162,25 @@ public class ClientsAndReceiptsPage {
             }
         });
 
-        containsRadioButton.addActionListener(new ActionListener() {
+        containsClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
-        startsWithRadioButton.addActionListener(new ActionListener() {
+        startsWithClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
-        idRadioButton.addActionListener(new ActionListener() {
+        alphabeticalReverseOrderClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
             }
         });
-        alphabeticalOrderButton.addActionListener(new ActionListener() {
+        alphabeticalOrderClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -251,6 +271,8 @@ public class ClientsAndReceiptsPage {
             public void actionPerformed(ActionEvent e) {
                 clientTableModel.setRowCount(0);
                 addDataToReceiptTable();
+                disableClientFilterProperties();
+                enableReceiptFilterProperties();
             }
         });
         clientRadioButton.addActionListener(new ActionListener() {
@@ -258,9 +280,11 @@ public class ClientsAndReceiptsPage {
             public void actionPerformed(ActionEvent e) {
                 receiptTableModel.setRowCount(0);
                 addDataToClientTable();
+                disableReceiptFilterProperties();
+                enableClientFilterProperties();
             }
         });
-        containsRadioButton.addActionListener(new ActionListener() {
+        containsClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (clientRadioButton.isSelected()){
@@ -270,7 +294,7 @@ public class ClientsAndReceiptsPage {
                 }
             }
         });
-        startsWithRadioButton.addActionListener(new ActionListener() {
+        startsWithClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (clientRadioButton.isSelected()){
@@ -280,7 +304,7 @@ public class ClientsAndReceiptsPage {
                 }
             }
         });
-        idRadioButton.addActionListener(new ActionListener() {
+        alphabeticalReverseOrderClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (clientRadioButton.isSelected()){
@@ -290,7 +314,7 @@ public class ClientsAndReceiptsPage {
                 }
             }
         });
-        alphabeticalOrderButton.addActionListener(new ActionListener() {
+        alphabeticalOrderClientsRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (clientRadioButton.isSelected()){
@@ -300,7 +324,7 @@ public class ClientsAndReceiptsPage {
                 }
             }
         });
-        findByWordField.addKeyListener(new KeyAdapter() {
+        findByWordClientsField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
@@ -349,6 +373,8 @@ public class ClientsAndReceiptsPage {
         receiptDateField.setVisible(true);
         totalPriceLabel.setVisible(true);
         totalPriceField.setVisible(true);
+        receiptProductsLabel.setVisible(true);
+        receiptProductsTextArea.setVisible(true);
     }
 
     private void enableClientProperties() {
@@ -379,14 +405,45 @@ public class ClientsAndReceiptsPage {
         clientIdField.setEnabled(true);
         receiptDateField.setEnabled(true);
         totalPriceField.setEnabled(true);
+        receiptProductsTextArea.setEnabled(true);
     }
     private void disableReceiptProperties() {
         idField.setEnabled(false);
         clientIdField.setEnabled(false);
         receiptDateField.setEnabled(false);
         totalPriceField.setEnabled(false);
+        receiptProductsTextArea.setEnabled(false);
     }
 
+    private void enableClientFilterProperties() {
+        containsClientsRadioButton.setEnabled(true);
+        startsWithClientsRadioButton.setEnabled(true);
+        alphabeticalOrderClientsRadioButton.setEnabled(true);
+        alphabeticalReverseOrderClientsRadioButton.setEnabled(true);
+        findByWordClientsField.setEnabled(true);
+    }
+    private void disableClientFilterProperties() {
+        containsClientsRadioButton.setEnabled(false);
+        startsWithClientsRadioButton.setEnabled(false);
+        alphabeticalOrderClientsRadioButton.setEnabled(false);
+        alphabeticalReverseOrderClientsRadioButton.setEnabled(false);
+        findByWordClientsField.setEnabled(false);
+    }
+
+    private void enableReceiptFilterProperties() {
+        containsReceiptRadioButton.setEnabled(true);
+        startsWithReceiptRadioButton.setEnabled(true);
+        idOrderReceiptsRadioButton.setEnabled(true);
+        idReverseOrderReceiptsRadioButton.setEnabled(true);
+        findByWordReceiptsField.setEnabled(true);
+    }
+    private void disableReceiptFilterProperties() {
+        containsReceiptRadioButton.setEnabled(false);
+        startsWithReceiptRadioButton.setEnabled(false);
+        idOrderReceiptsRadioButton.setEnabled(false);
+        idReverseOrderReceiptsRadioButton.setEnabled(false);
+        findByWordReceiptsField.setEnabled(false);
+    }
 
     private void addHeadersToClientTable() {
         Object[] headerObject = new String[] {
@@ -410,42 +467,39 @@ public class ClientsAndReceiptsPage {
     private void addDataToClientTable() {
         hideAllProperties();
         clientTableModel.setRowCount(0);
-        Object[][] rowDataObject = {
-                {"1", "Ion", "Popescu", "test@email.com", "0722222222", "Bucuresti", "Sector 2", "Str. Test 1"},
-                {"2", "Gion", "aLECU", "test2@email.com", "0722234222", "gALATI", "tECUCI", "Str. Test 2"},
-                {"3", "alex", "munteanu", "test3@email.com", "07222223232", "brasov", "centru", "Str. Test 3"},
-        };
-        for (int i = 0; i < rowDataObject.length; i++){
-            if (containsRadioButton.isSelected() && !findByWordField.equals("")){
-                if (rowDataObject[i][1].toString().toLowerCase().contains(findByWordField.getText().toLowerCase()) || rowDataObject[i][2].toString().toLowerCase().contains(findByWordField.getText().toLowerCase())){
-                    clientTableModel.addRow(rowDataObject[i]);
+        for (int i = 0; i < clientsRowDataObject.length; i++){
+            if (containsClientsRadioButton.isSelected() && !findByWordClientsField.equals("")){
+                if (clientsRowDataObject[i][1].toString().toLowerCase().contains(findByWordClientsField.getText().toLowerCase()) || clientsRowDataObject[i][2].toString().toLowerCase().contains(findByWordClientsField.getText().toLowerCase())){
+                    clientTableModel.addRow(clientsRowDataObject[i]);
                 }
-            } else if (startsWithRadioButton.isSelected() && !findByWordField.equals("")){
-                if (rowDataObject[i][1].toString().toLowerCase().startsWith(findByWordField.getText()) || rowDataObject[i][2].toString().toLowerCase().startsWith(findByWordField.getText().toLowerCase())){
-                    clientTableModel.addRow(rowDataObject[i]);
+            } else if (startsWithClientsRadioButton.isSelected() && !findByWordClientsField.equals("")){
+                if (clientsRowDataObject[i][1].toString().toLowerCase().startsWith(findByWordClientsField.getText()) || clientsRowDataObject[i][2].toString().toLowerCase().startsWith(findByWordClientsField.getText().toLowerCase())){
+                    clientTableModel.addRow(clientsRowDataObject[i]);
                 }
             } else{
-                clientTableModel.addRow(rowDataObject[i]);
+                clientTableModel.addRow(clientsRowDataObject[i]);
             }
         }
     }
     private void addDataToReceiptTable() {
         receiptTableModel.setRowCount(0);
-        Object[][] rowDataObject = {
-                {"1", "256", "2020-01-01", "100"},
-                {"2", "354", "2020-01-02", "200"},
-        };
-        for (int i = 0; i < rowDataObject.length; i++){
-            receiptTableModel.addRow(rowDataObject[i]);
+        for (int i = 0; i < receiptsRowDataObject.length; i++){
+            receiptTableModel.addRow(receiptsRowDataObject[i]);
         }
     }
 
     private void createButtonGroups() {
-        tableTypeButtonGroup.add(clientRadioButton);
-        tableTypeButtonGroup.add(receiptRadioButton);
-        filterTypeButtonGroup.add(containsRadioButton);
-        filterTypeButtonGroup.add(startsWithRadioButton);
-        orderTypeButtonGroup.add(idRadioButton);
-        orderTypeButtonGroup.add(alphabeticalOrderButton);
+        tableTypeClientsButtonGroup.add(clientRadioButton);
+        tableTypeClientsButtonGroup.add(receiptRadioButton);
+
+        filterTypeClientsButtonGroup.add(containsClientsRadioButton);
+        filterTypeClientsButtonGroup.add(startsWithClientsRadioButton);
+        orderTypeClientsButtonGroup.add(alphabeticalOrderClientsRadioButton);
+        orderTypeClientsButtonGroup.add(alphabeticalReverseOrderClientsRadioButton);
+
+        tableTypeReceiptsButtonGroup.add(containsReceiptRadioButton);
+        tableTypeReceiptsButtonGroup.add(startsWithReceiptRadioButton);
+        filterTypeReceiptsButtonGroup.add(idOrderReceiptsRadioButton);
+        filterTypeReceiptsButtonGroup.add(idReverseOrderReceiptsRadioButton);
     }
 }
