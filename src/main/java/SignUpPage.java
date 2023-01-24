@@ -81,6 +81,7 @@ public class SignUpPage {
                     cityComboBox.setVisible(true);
                 }
                 JSONArray cityData = locationData.getCityData(currentInitials);
+                cityComboBox.removeAllItems();
                 for (int i = 0; i < cityData.size(); i++) {
                     JSONObject temp = (JSONObject) cityData.get(i);
                     cityComboBox.addItem(temp.get("nume"));

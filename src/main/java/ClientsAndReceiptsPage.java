@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -80,9 +81,9 @@ public class ClientsAndReceiptsPage {
     ButtonGroup orderTypeReceiptsButtonGroup = new ButtonGroup();
 
     Object[][] clientsRowDataObject = {
-            {"1", "Ion", "Popescu", "test@email.com", "0722222222", "Bucuresti", "Sector 2", "Str. Test 1"},
-            {"2", "Gion", "aLECU", "test2@email.com", "0722234222", "gALATI", "tECUCI", "Str. Test 2"},
-            {"3", "alex", "munteanu", "test3@email.com", "07222223232", "brasov", "centru", "Str. Test 3"},
+            {"1", "Ion", "Popescu", "test@email.com", "0722222222", "București", "Sector 2", "Str. Test 1"},
+            {"2", "Gion", "aLECU", "test2@email.com", "0722234222", "Galați", "Barcea", "Str. Test 2"},
+            {"3", "alex", "munteanu", "test3@email.com", "07222223232", "Brașov", "Bod", "Str. Test 3"},
     };
     Object[][] receiptsRowDataObject = {
             {"121", "256", "2020-01-01", "100", "PLACA DE BAZA, PROCESOR, RAM"},
@@ -98,36 +99,7 @@ public class ClientsAndReceiptsPage {
         addHeadersToClientTable();
         addHeadersToReceiptTable();
         createButtonGroups();
-
-
-
-        JSONArray stateData = locationData.getStateData();
-        for (int i = 0; i < stateData.size(); i++) {
-            JSONObject temp = (JSONObject) stateData.get(i);
-            stateComboBox.addItem(temp.get("nume"));
-        }
-        stateComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String currentInitials = "";
-                for (int i = 0; i < stateData.size(); i++) {
-                    JSONObject temp = (JSONObject) stateData.get(i);
-                    if (temp.get("nume").equals(stateComboBox.getSelectedItem())) {
-                        currentInitials = (String) temp.get("auto");
-                    }
-                }
-                if (!currentInitials.equals("")) {
-                    cityLabel.setVisible(true);
-                    cityComboBox.setVisible(true);
-                }
-                JSONArray cityData = locationData.getCityData(currentInitials);
-                for (int i = 0; i < cityData.size(); i++) {
-                    JSONObject temp = (JSONObject) cityData.get(i);
-                    cityComboBox.addItem(temp.get("nume"));
-                    cityComboBox.setEnabled(true);
-                }
-            }
-        });
+        setComboBoxesData();
 
         allDataCheckBox.addActionListener(new ActionListener() {
             @Override
@@ -178,6 +150,7 @@ public class ClientsAndReceiptsPage {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 showReceiptProperties();
+                populateReceiptFields();
                 modifyReceiptButton.setEnabled(true);
                 modifyClientButton.setEnabled(false);
                 saveClientButton.setEnabled(false);
@@ -188,6 +161,7 @@ public class ClientsAndReceiptsPage {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 showClientProperties();
+                populateClientFields();
                 modifyClientButton.setEnabled(true);
                 modifyReceiptButton.setEnabled(false);
                 saveReceiptButton.setEnabled(false);
@@ -226,8 +200,6 @@ public class ClientsAndReceiptsPage {
             public void actionPerformed(ActionEvent e) {
 
             }
-        });
-        clientDataTable.addComponentListener(new ComponentAdapter() {
         });
         modifyClientButton.addActionListener(new ActionListener() {
             @Override
@@ -504,23 +476,6 @@ public class ClientsAndReceiptsPage {
         }
         numberOfClientsLabel.setText(clientTableModel.getRowCount() + " clienti");
     }
-
-    private void backToDefaultClientsSort(){
-        Arrays.sort(clientsRowDataObject, new Comparator<Object[]>() {
-            @Override
-            public int compare(Object[] o1, Object[] o2) {
-                return Integer.compare(Integer.parseInt(o1[0].toString()), Integer.parseInt(o2[0].toString()));
-            }
-        });
-    }
-    private void backToDefaultReceiptsSort(){
-        Arrays.sort(receiptsRowDataObject, new Comparator<Object[]>() {
-            @Override
-            public int compare(Object[] o1, Object[] o2) {
-                return Integer.compare(Integer.parseInt(o1[0].toString()), Integer.parseInt(o2[0].toString()));
-            }
-        });
-    }
     private void addDataToReceiptTable() {
         receiptTableModel.setRowCount(0);
         backToDefaultReceiptsSort();
@@ -555,7 +510,22 @@ public class ClientsAndReceiptsPage {
         }
         numberOfReceiptsLabel.setText(receiptTableModel.getRowCount() + " facturi");
     }
-
+    private void backToDefaultClientsSort(){
+        Arrays.sort(clientsRowDataObject, new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                return Integer.compare(Integer.parseInt(o1[0].toString()), Integer.parseInt(o2[0].toString()));
+            }
+        });
+    }
+    private void backToDefaultReceiptsSort(){
+        Arrays.sort(receiptsRowDataObject, new Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] o1, Object[] o2) {
+                return Integer.compare(Integer.parseInt(o1[0].toString()), Integer.parseInt(o2[0].toString()));
+            }
+        });
+    }
     private void createButtonGroups() {
         tableTypeClientsButtonGroup.add(clientRadioButton);
         tableTypeClientsButtonGroup.add(receiptRadioButton);
@@ -569,5 +539,105 @@ public class ClientsAndReceiptsPage {
         tableTypeReceiptsButtonGroup.add(startsWithReceiptRadioButton);
         filterTypeReceiptsButtonGroup.add(idOrderReceiptsRadioButton);
         filterTypeReceiptsButtonGroup.add(idReverseOrderReceiptsRadioButton);
+    }
+
+    private void setComboBoxesData(){
+        JSONArray stateData = locationData.getStateData();
+        for (int i = 0; i < stateData.size(); i++) {
+            JSONObject temp = (JSONObject) stateData.get(i);
+            stateComboBox.addItem(temp.get("nume").toString());
+        }
+
+        stateComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String currentInitials = "";
+                for (int i = 0; i < stateData.size(); i++) {
+                    JSONObject temp = (JSONObject) stateData.get(i);
+                    if (temp.get("nume").equals(stateComboBox.getSelectedItem())) {
+                        currentInitials = (String) temp.get("auto");
+                    }
+                }
+                if (!currentInitials.equals("")) {
+                    cityLabel.setVisible(true);
+                    cityComboBox.setVisible(true);
+                }
+                JSONArray cityData = locationData.getCityData(currentInitials);
+                cityComboBox.removeAllItems();
+                for (int i = 0; i < cityData.size(); i++) {
+                    JSONObject temp = (JSONObject) cityData.get(i);
+                    cityComboBox.addItem(temp.get("nume"));
+                }
+            }
+        });
+    }
+
+    private void populateClientFields() {
+        int selectedRow = clientDataTable.getSelectedRow();
+        Object[][] tempRowDataObject = clientsRowDataObject;
+        if (selectedRow != -1) {
+            for (int i = 0; i < tempRowDataObject.length; i++) {
+                if (tempRowDataObject[selectedRow][0].toString().equals(clientTableModel.getValueAt(selectedRow, 0).toString())) {
+                    propertiesTitleLabel.setText("Se incarca...");
+                    idField.setText(tempRowDataObject[selectedRow][0].toString());
+                    nameField.setText(tempRowDataObject[selectedRow][1].toString());
+                    lastNameField.setText(tempRowDataObject[selectedRow][2].toString());
+                    emailField.setText(tempRowDataObject[selectedRow][3].toString());
+                    phoneField.setText(tempRowDataObject[selectedRow][4].toString());
+                    normalizeComboBoxValues(stateComboBox, cityComboBox, tempRowDataObject, selectedRow);
+                    addressField.setText(tempRowDataObject[selectedRow][7].toString());
+                }
+            }
+        }
+        propertiesTitleLabel.setText("Detalii inregistrare");
+    }
+
+    private void normalizeComboBoxValues(JComboBox stateComboBox, JComboBox cityComboBox, Object[][] tempRowDataObject, int selectedRow){
+        String stateWithDiacritics = tempRowDataObject[selectedRow][5].toString();
+        String stateWithoutDiacritics = Normalizer.normalize(stateWithDiacritics, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
+
+        for (int j = 0; j < stateComboBox.getItemCount(); j++) {
+            String comboBoxStateWithDiacritics = stateComboBox.getItemAt(j).toString();
+            String comboBoxStateWithoutDiacritics = Normalizer.normalize(comboBoxStateWithDiacritics, Normalizer.Form.NFD)
+                    .replaceAll("[^\\p{ASCII}]", "");
+            if (comboBoxStateWithoutDiacritics.equals(stateWithoutDiacritics)){
+                stateComboBox.setSelectedIndex(j);
+                break;
+            }
+        }
+        String cityWithDiacritics = tempRowDataObject[selectedRow][6].toString();
+        String cityWithoutDiacritics = Normalizer.normalize(cityWithDiacritics, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "");
+
+        for (int j = 0; j < cityComboBox.getItemCount(); j++) {
+            String comboBoxCityWithDiacritics = cityComboBox.getItemAt(j).toString();
+            String comboBoxCityWithoutDiacritics = Normalizer.normalize(comboBoxCityWithDiacritics, Normalizer.Form.NFD)
+                    .replaceAll("[^\\p{ASCII}]", "");
+            if (comboBoxCityWithoutDiacritics.equals(cityWithoutDiacritics)){
+                cityComboBox.setSelectedIndex(j);
+                break;
+            }
+        }
+    }
+
+    private void populateReceiptFields() {
+        int selectedRow = receiptDataTable.getSelectedRow();
+        Object[][] tempRowDataObject = receiptsRowDataObject;
+        if (selectedRow != -1) {
+            for (int i = 0; i < tempRowDataObject.length; i++) {
+                if (tempRowDataObject[selectedRow][0].toString().equals(receiptTableModel.getValueAt(selectedRow, 0).toString())) {
+                    propertiesTitleLabel.setText("Se incarca...");
+                    idField.setText(tempRowDataObject[selectedRow][0].toString());
+                    clientIdField.setText(tempRowDataObject[selectedRow][1].toString());
+                    receiptDateField.setText(tempRowDataObject[selectedRow][2].toString());
+                    totalPriceField.setText(tempRowDataObject[selectedRow][3].toString());
+                    String tempArea = tempRowDataObject[selectedRow][4].toString();
+//                    String[] tempAreaArray = tempArea.split(",");
+                    receiptProductsTextArea.setText(tempArea);
+                }
+            }
+        }
+        propertiesTitleLabel.setText("Detalii inregistrare");
     }
 }
