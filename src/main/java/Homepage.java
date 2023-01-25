@@ -1,11 +1,10 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 
 public class Homepage {
     JPanel homePageParentPanel;
@@ -77,11 +76,11 @@ public class Homepage {
     private JTextField numberOfCoresField;
     private JTextField freqField;
     private JRadioButton nameOrderRadioButton;
-    private JRadioButton seriesOrderRadioButton;
     private JRadioButton componentTypeOrderRadioButton;
     private JLabel memoryEffectiveFreqLabel;
     private JTextField memoryEffectiveFreqField;
     private JLabel numberOfProductsLabel;
+    private JButton deleteButton;
 
     DefaultTableModel dataTableModel = (DefaultTableModel) dataTable.getModel();
     DefaultTableModel cartTableModel = (DefaultTableModel) cartTable.getModel();
@@ -112,6 +111,7 @@ public class Homepage {
     Object[][] productsRawDataObject;
 
     private boolean errors = false;
+    private boolean addNewProductIsOn = false;
 
     public Homepage(ApplicationInterface applicationInterface) {
         dataTable.setDefaultEditor(Object.class, null);
@@ -136,6 +136,9 @@ public class Homepage {
                 addButton.setEnabled(false);
                 modifyButton.setEnabled(false);
                 showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
+                addNewProductIsOn = true;
+                disableFilterProperties();
+                allDataCheckBox.setSelected(false);
             }
         });
         modifyButton.addActionListener(new ActionListener() {
@@ -150,35 +153,24 @@ public class Homepage {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveProductChanges(componentTypeComboBox.getSelectedItem().toString());
+                if (addNewProductIsOn) {
+                    addNewProduct();
+                    addNewProductIsOn = false;
+                }else{
+                    saveProductChanges(componentTypeComboBox.getSelectedItem().toString());
+                }
                 saveButton.setEnabled(false);
                 modifyButton.setEnabled(true);
                 disableAllFields();
                 addDataToDataObject();
-
-            }
-        });
-        containsRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        startsWithRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        seriesOrderRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                addButton.setEnabled(true);
 
             }
         });
         componentTypeOrderRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                addDataToDataObject();
             }
         });
         allDataCheckBox.addActionListener(new ActionListener() {
@@ -193,8 +185,8 @@ public class Homepage {
                     enableFilterProperties();
                     dataTableModel.setRowCount(0);
                     numberOfProductsLabel.setText("0 produse");
-                    addButton.setEnabled(true);
                 }
+                addButton.setEnabled(true);
             }
         });
         viewClientsButton.addActionListener(new ActionListener() {
@@ -212,7 +204,7 @@ public class Homepage {
                 showProperties(componentTypeComboBox.getSelectedItem().toString());
                 modifyButton.setEnabled(true);
                 saveButton.setEnabled(false);
-                addButton.setEnabled(false);
+                deleteButton.setEnabled(true);
             }
         });
         componentTypeComboBox.addActionListener(new ActionListener() {
@@ -223,6 +215,37 @@ public class Homepage {
         });
 
 
+        nameOrderRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addDataToDataObject();
+            }
+        });
+        findByWordField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                super.keyReleased(e);
+                addDataToDataObject();
+            }
+        });
+        containsRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addDataToDataObject();
+            }
+        });
+        startsWithRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addDataToDataObject();
+            }
+        });
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeProduct();
+            }
+        });
     }
 
     private void restoreFieldsToDefault(){
@@ -434,7 +457,6 @@ public class Homepage {
         filterTypeClientsButtonGroup.add(startsWithRadioButton);
 
         orderTypeClientsButtonGroup.add(nameOrderRadioButton);
-        orderTypeClientsButtonGroup.add(seriesOrderRadioButton);
         orderTypeClientsButtonGroup.add(componentTypeOrderRadioButton);
     }
 
@@ -453,7 +475,6 @@ public class Homepage {
 
     private void disableFilterProperties(){
         nameOrderRadioButton.setEnabled(false);
-        seriesOrderRadioButton.setEnabled(false);
         componentTypeOrderRadioButton.setEnabled(false);
         findByWordField.setEnabled(false);
         containsRadioButton.setEnabled(false);
@@ -461,7 +482,6 @@ public class Homepage {
     }
     private void enableFilterProperties(){
         nameOrderRadioButton.setEnabled(true);
-        seriesOrderRadioButton.setEnabled(true);
         componentTypeOrderRadioButton.setEnabled(true);
         findByWordField.setEnabled(true);
         containsRadioButton.setEnabled(true);
@@ -492,7 +512,6 @@ public class Homepage {
         hideAllProperties();
         dataTableModel.setRowCount(0);
         backToDefaultSort();
-        addButton.setEnabled(false);
         modifyButton.setEnabled(false);
         saveButton.setEnabled(false);
         Object[][] tempRowDataObject = productsRawDataObject;
@@ -500,28 +519,25 @@ public class Homepage {
             Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
                 @Override
                 public int compare(Object[] o1, Object[] o2) {
+                    return ((String) o1[0]).compareToIgnoreCase((String) o2[0]);
+                }
+            });
+        } else if (componentTypeOrderRadioButton.isSelected()){
+            Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
+                @Override
+                public int compare(Object[] o1, Object[] o2) {
                     return ((String) o1[1]).compareToIgnoreCase((String) o2[1]);
                 }
             });
         }
-        // ordonare dupa serie
-//        else if (alphabeticalReverseOrderClientsRadioButton.isSelected()){
-//            Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
-//                @Override
-//                public int compare(Object[] o1, Object[] o2) {
-//                    return -((String) o1[1]).compareToIgnoreCase((String) o2[1]);
-//                }
-//            });
-//        }
-        //ordonare dupa tip componenta
 
         for (int i = 0; i < tempRowDataObject.length; i++){
             if (containsRadioButton.isSelected() && !findByWordField.equals("")){
-                if (tempRowDataObject[i][1].toString().toLowerCase().contains(findByWordField.getText().toLowerCase()) || tempRowDataObject[i][2].toString().toLowerCase().contains(findByWordField.getText().toLowerCase())){
+                if (tempRowDataObject[i][0].toString().toLowerCase().contains(findByWordField.getText().toLowerCase())){
                     addDataAtSpecificIndex(i, tempRowDataObject);
                 }
             } else if (startsWithRadioButton.isSelected() && !findByWordField.equals("")){
-                if (tempRowDataObject[i][1].toString().toLowerCase().startsWith(findByWordField.getText()) || tempRowDataObject[i][2].toString().toLowerCase().startsWith(findByWordField.getText().toLowerCase())){
+                if (tempRowDataObject[i][0].toString().toLowerCase().startsWith(findByWordField.getText())){
                     addDataAtSpecificIndex(i, tempRowDataObject);
                 }
             } else{
@@ -789,7 +805,7 @@ public class Homepage {
             } else {
                 for (int i = 0; i < productsDataObject.length; i++) {
                     if (productsDataObject[i] instanceof Gpu && ((Gpu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Gpu) productsDataObject[i]).updateGpu(name, "Placa video", series, chipset, memorySize, memoryType, memoryFreq, memoryEffectiveFreq, power);
+                        ((Gpu) productsDataObject[i]).updateGpu(name, "Placa video", chipset, memoryType, memoryEffectiveFreq, series, power, memorySize, coolingSystem);
                         JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                         errors = false;
                     }
@@ -808,6 +824,105 @@ public class Homepage {
         allDataCheckBox.setEnabled(false);
         dataTableModel.setRowCount(0);
     }
+
+    private void addNewProduct(){
+        String name = nameField.getText();
+        String componentType = componentTypeComboBox.getSelectedItem().toString();
+        String chipset = chipsetComboBox.getSelectedItem().toString();
+        String socket = socketField.getText();
+        String memoryType = memoryTypeComboBox.getSelectedItem().toString();
+        String maxMemory = maxMemoryField.getText();
+        String numberOfSlots = numberOfSlotsField.getText();
+        String memoryFreq = memoryFreqField.getText();
+        String modulation = modulationCheckBox.isSelected() ? "Da" : "Nu";
+        String memoryEffectiveFreq = memoryEffectiveFreqField.getText();
+        String series = seriesField.getText();
+        String numberOfCores = numberOfCoresField.getText();
+        String freq = freqField.getText();
+        String power = powerField.getText();
+        String capacity = capacityField.getText();
+        String ssdType = ssdTypeComboBox.getSelectedItem().toString();
+        String maxRead = maxReadField.getText();
+        String maxWrite = maxWriteField.getText();
+        String memorySize = memorySizeField.getText();
+        String coolingSystem = coolingSystemComboBox.getSelectedItem().toString();
+
+        if (componentType.equals("Procesor")){
+            Processor processor = new Processor(name, componentType, chipset, socket, memoryType, maxMemory, memoryFreq, series, numberOfCores, freq, power);
+            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
+            productsDataObject[productsDataObject.length - 1] = processor;
+        }else if (componentType.equals("Placa de baza")){
+            Motherboard motherboard = new Motherboard(name, componentType, chipset, socket, memoryType, maxMemory, numberOfSlots, memoryFreq);
+            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
+            productsDataObject[productsDataObject.length - 1] = motherboard;
+        }else if (componentType.equals("Stocare SSD")) {
+            Ssd ssd = new Ssd(name, componentType, series, capacity, ssdType, maxRead, maxWrite);
+            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
+            productsDataObject[productsDataObject.length - 1] = ssd;
+        }else if (componentType.equals("Sursa")) {
+            Psu psu = new Psu(name, componentType, modulation, power);
+            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
+            productsDataObject[productsDataObject.length - 1] = psu;
+        } else if (componentType.equals("Memorie RAM")) {
+            Memory memory = new Memory(name, componentType, memoryType, series, freq, capacity);
+            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
+            productsDataObject[productsDataObject.length - 1] = memory;
+        } else if (componentType.equals("Placa video")) {
+            Gpu gpu = new Gpu(name, componentType, chipset, memoryType, memoryEffectiveFreq, series, power, memorySize, coolingSystem);
+            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
+            productsDataObject[productsDataObject.length - 1] = gpu;
+        }
+    }
+
+    private void removeProduct(){
+        int selectedRow = dataTable.getSelectedRow();
+        if (selectedRow == -1){
+            JOptionPane.showMessageDialog(null, "Nu ati selectat niciun produs!");
+        } else {
+            for (int i = 0; i < productsDataObject.length; i++) {
+                if (productsDataObject[i] instanceof Processor && ((Processor) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    productsDataObject[i] = null;
+                    productsDataObject = Arrays.stream(productsDataObject)
+                            .filter(Objects::nonNull)
+                            .toArray();
+                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
+                } else if (productsDataObject[i] instanceof Motherboard && ((Motherboard) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    productsDataObject[i] = null;
+                    productsDataObject = Arrays.stream(productsDataObject)
+                            .filter(Objects::nonNull)
+                            .toArray();
+                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
+                } else if (productsDataObject[i] instanceof Ssd && ((Ssd) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    productsDataObject[i] = null;
+                    productsDataObject = Arrays.stream(productsDataObject)
+                            .filter(Objects::nonNull)
+                            .toArray();
+                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
+                } else if (productsDataObject[i] instanceof Psu && ((Psu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    productsDataObject[i] = null;
+                    productsDataObject = Arrays.stream(productsDataObject)
+                            .filter(Objects::nonNull)
+                            .toArray();
+                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
+                } else if (productsDataObject[i] instanceof Memory && ((Memory) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    productsDataObject[i] = null;
+                    productsDataObject = Arrays.stream(productsDataObject)
+                            .filter(Objects::nonNull)
+                            .toArray();
+                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
+                } else if (productsDataObject[i] instanceof Gpu && ((Gpu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    productsDataObject[i] = null;
+                    productsDataObject = Arrays.stream(productsDataObject)
+                            .filter(Objects::nonNull)
+                            .toArray();
+                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
+                }
+            }
+        }
+        addDataToDataObject();
+    }
+
+
 }
 
 

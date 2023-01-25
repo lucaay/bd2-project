@@ -554,32 +554,6 @@
               <text value="Vizualizare clienti si facturi"/>
             </properties>
           </component>
-          <component id="93167" class="javax.swing.JButton" binding="addButton">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Adauga un produs"/>
-            </properties>
-          </component>
-          <component id="5d53c" class="javax.swing.JButton" binding="modifyButton">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <enabled value="false"/>
-              <text value="Modifica produsul"/>
-            </properties>
-          </component>
-          <component id="70f31" class="javax.swing.JButton" binding="saveButton">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <enabled value="false"/>
-              <text value="Salveaza produsul"/>
-            </properties>
-          </component>
           <component id="d851" class="javax.swing.JButton" binding="addToCartButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -598,9 +572,44 @@
               <text value="Sterge produsul din cos"/>
             </properties>
           </component>
+          <component id="93167" class="javax.swing.JButton" binding="addButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Adauga un produs"/>
+            </properties>
+          </component>
+          <component id="5d53c" class="javax.swing.JButton" binding="modifyButton">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <text value="Modifica produsul"/>
+            </properties>
+          </component>
+          <component id="9a06d" class="javax.swing.JButton" binding="deleteButton">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <text value="Sterge produsul"/>
+            </properties>
+          </component>
+          <component id="70f31" class="javax.swing.JButton" binding="saveButton">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <text value="Salveaza produsul"/>
+            </properties>
+          </component>
         </children>
       </grid>
-      <grid id="ab6dc" binding="filtersPanel" layout-manager="GridLayoutManager" row-count="4" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="ab6dc" binding="filtersPanel" layout-manager="GridLayoutManager" row-count="4" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -614,7 +623,7 @@
         <children>
           <component id="c428e" class="javax.swing.JCheckBox" binding="allDataCheckBox">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="7" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Toate produsele"/>
@@ -635,14 +644,6 @@
               </grid>
             </constraints>
             <properties/>
-          </component>
-          <component id="1a625" class="javax.swing.JRadioButton" binding="componentTypeOrderRadioButton">
-            <constraints>
-              <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Dupa tip componenta"/>
-            </properties>
           </component>
           <component id="e82ae" class="javax.swing.JLabel" binding="findByWordLabel">
             <constraints>
@@ -668,12 +669,12 @@
               <text value="Dupa denumire"/>
             </properties>
           </component>
-          <component id="c2ad8" class="javax.swing.JRadioButton" binding="seriesOrderRadioButton">
+          <component id="1a625" class="javax.swing.JRadioButton" binding="componentTypeOrderRadioButton">
             <constraints>
               <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Dupa Serie"/>
+              <text value="Dupa tip componenta"/>
             </properties>
           </component>
         </children>
