@@ -12,11 +12,17 @@ public class SignInPage {
     private JLabel passwordLabel;
     private JLabel emailLabel;
 
+    MysqlCon mysqlCon = new MysqlCon();
+
     public SignInPage(ApplicationInterface applicationInterface) {
         singInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                applicationInterface.showHomePage();
+                if (mysqlCon.verifyLogin(emailField.getText(), passwordField.getText()){
+                    applicationInterface.showHomePage();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Email sau parola gresita!");
+                }
             }
         });
         createAccountButton.addActionListener(new ActionListener() {
