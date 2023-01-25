@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
@@ -27,7 +26,7 @@ public class Homepage {
     private JTable cartTable;
     private JButton addToCartButton;
     private JButton deleteFromCartButton;
-    private JLabel cartPriceLabel;
+    private JLabel cartProductsLabel;
     private JLabel cartTitleLabel;
     private JButton cartRemoveAllItemsButton;
     private JButton cartBuyButton;
@@ -109,6 +108,8 @@ public class Homepage {
             gpu,
     };
     Object[][] productsRawDataObject;
+    Object[] cartDataObject = {};
+    Object[][] cartRawDataObject;
 
     private boolean errors = false;
     private boolean addNewProductIsOn = false;
@@ -205,6 +206,7 @@ public class Homepage {
                 modifyButton.setEnabled(true);
                 saveButton.setEnabled(false);
                 deleteButton.setEnabled(true);
+                addToCartButton.setEnabled(true);
             }
         });
         componentTypeComboBox.addActionListener(new ActionListener() {
@@ -244,6 +246,33 @@ public class Homepage {
             @Override
             public void actionPerformed(ActionEvent e) {
                 removeProduct();
+            }
+        });
+        cartTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                addToCartButton.setEnabled(false);
+                deleteFromCartButton.setEnabled(true);
+            }
+        });
+        addToCartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addToCart();
+            }
+        });
+        deleteFromCartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deleteFromCart();
+            }
+        });
+        cartRemoveAllItemsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cartTableModel.setRowCount(0);
+                cartProductsLabel.setText("0 produse");
             }
         });
     }
@@ -534,86 +563,86 @@ public class Homepage {
         for (int i = 0; i < tempRowDataObject.length; i++){
             if (containsRadioButton.isSelected() && !findByWordField.equals("")){
                 if (tempRowDataObject[i][0].toString().toLowerCase().contains(findByWordField.getText().toLowerCase())){
-                    addDataAtSpecificIndex(i, tempRowDataObject);
+                    addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
                 }
             } else if (startsWithRadioButton.isSelected() && !findByWordField.equals("")){
                 if (tempRowDataObject[i][0].toString().toLowerCase().startsWith(findByWordField.getText())){
-                    addDataAtSpecificIndex(i, tempRowDataObject);
+                    addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
                 }
             } else{
-                addDataAtSpecificIndex(i, tempRowDataObject);
+                addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
             }
         }
         numberOfProductsLabel.setText(dataTableModel.getRowCount() + " produse");
     }
-    private void addDataAtSpecificIndex(int i, Object[][] tempRowDataObject){
-            if (tempRowDataObject[i][1].toString().equals("Procesor")) {
-                int row = dataTableModel.getRowCount();
-                dataTableModel.addRow(new Object[] {});
-                dataTableModel.setValueAt(tempRowDataObject[i][0].toString(), row, 0); //name
-                dataTableModel.setValueAt(tempRowDataObject[i][1].toString(), row, 1); //component type
-                dataTableModel.setValueAt(tempRowDataObject[i][2].toString(), row, 2); // chipset
-                dataTableModel.setValueAt(tempRowDataObject[i][3].toString(), row, 3); // socket
-                dataTableModel.setValueAt(tempRowDataObject[i][4].toString(), row, 4); //memory type
-                dataTableModel.setValueAt(tempRowDataObject[i][5].toString(), row, 5); //max memory
-                dataTableModel.setValueAt(tempRowDataObject[i][6].toString(), row, 7); //memory freq
-                dataTableModel.setValueAt(tempRowDataObject[i][7].toString(), row, 10); // series
-                dataTableModel.setValueAt(tempRowDataObject[i][8].toString(), row, 11); // number of cores
-                dataTableModel.setValueAt(tempRowDataObject[i][9].toString(), row, 12); // frequency
-                dataTableModel.setValueAt(tempRowDataObject[i][10].toString(), row, 13); // power
+    private void addDataAtSpecificIndex(int i, Object[][] dataObject, DefaultTableModel tableModel){
+            if (dataObject[i][1].toString().equals("Procesor")) {
+                int row = tableModel.getRowCount();
+                tableModel.addRow(new Object[] {});
+                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
+                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
+                tableModel.setValueAt(dataObject[i][2].toString(), row, 2); // chipset
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 3); // socket
+                tableModel.setValueAt(dataObject[i][4].toString(), row, 4); //memory type
+                tableModel.setValueAt(dataObject[i][5].toString(), row, 5); //max memory
+                tableModel.setValueAt(dataObject[i][6].toString(), row, 7); //memory freq
+                tableModel.setValueAt(dataObject[i][7].toString(), row, 10); // series
+                tableModel.setValueAt(dataObject[i][8].toString(), row, 11); // number of cores
+                tableModel.setValueAt(dataObject[i][9].toString(), row, 12); // frequency
+                tableModel.setValueAt(dataObject[i][10].toString(), row, 13); // power
 
-            } else if (tempRowDataObject[i][1].toString().equals("Memorie RAM")) {
-                int row = dataTableModel.getRowCount();
-                dataTableModel.addRow(new Object[] {});
-                dataTableModel.setValueAt(tempRowDataObject[i][0].toString(), row, 0); //name
-                dataTableModel.setValueAt(tempRowDataObject[i][1].toString(), row, 1); //component type
-                dataTableModel.setValueAt(tempRowDataObject[i][2].toString(), row, 4); // memory type
-                dataTableModel.setValueAt(tempRowDataObject[i][3].toString(), row, 10); // series
-                dataTableModel.setValueAt(tempRowDataObject[i][4].toString(), row, 12); // freq
-                dataTableModel.setValueAt(tempRowDataObject[i][5].toString(), row, 14); // capacity
-            } else if (tempRowDataObject[i][1].toString().equals("Placa de baza")) {
-                int row = dataTableModel.getRowCount();
-                dataTableModel.addRow(new Object[] {});
-                dataTableModel.setValueAt(tempRowDataObject[i][0].toString(), row, 0); //name
-                dataTableModel.setValueAt(tempRowDataObject[i][1].toString(), row, 1); //component type
-                dataTableModel.setValueAt(tempRowDataObject[i][2].toString(), row, 2); // chipset
-                dataTableModel.setValueAt(tempRowDataObject[i][3].toString(), row, 3); // socket
-                dataTableModel.setValueAt(tempRowDataObject[i][4].toString(), row, 4); // memory type
-                dataTableModel.setValueAt(tempRowDataObject[i][5].toString(), row, 5); //max memory
-                dataTableModel.setValueAt(tempRowDataObject[i][6].toString(), row, 6); //memory slots
-                dataTableModel.setValueAt(tempRowDataObject[i][7].toString(), row, 7); //memory freq
+            } else if (dataObject[i][1].toString().equals("Memorie RAM")) {
+                int row = tableModel.getRowCount();
+                tableModel.addRow(new Object[] {});
+                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
+                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
+                tableModel.setValueAt(dataObject[i][2].toString(), row, 4); // memory type
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 10); // series
+                tableModel.setValueAt(dataObject[i][4].toString(), row, 12); // freq
+                tableModel.setValueAt(dataObject[i][5].toString(), row, 14); // capacity
+            } else if (dataObject[i][1].toString().equals("Placa de baza")) {
+                int row = tableModel.getRowCount();
+                tableModel.addRow(new Object[] {});
+                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
+                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
+                tableModel.setValueAt(dataObject[i][2].toString(), row, 2); // chipset
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 3); // socket
+                tableModel.setValueAt(dataObject[i][4].toString(), row, 4); // memory type
+                tableModel.setValueAt(dataObject[i][5].toString(), row, 5); //max memory
+                tableModel.setValueAt(dataObject[i][6].toString(), row, 6); //memory slots
+                tableModel.setValueAt(dataObject[i][7].toString(), row, 7); //memory freq
 
 
-            } else if (tempRowDataObject[i][1].toString().equals("Stocare SSD")) {
-                int row = dataTableModel.getRowCount();
-                dataTableModel.addRow(new Object[] {});
-                dataTableModel.setValueAt(tempRowDataObject[i][0].toString(), row, 0); //name
-                dataTableModel.setValueAt(tempRowDataObject[i][1].toString(), row, 1); //component type
-                dataTableModel.setValueAt(tempRowDataObject[i][2].toString(), row, 10); // series
-                dataTableModel.setValueAt(tempRowDataObject[i][3].toString(), row, 14); // capacity
-                dataTableModel.setValueAt(tempRowDataObject[i][4].toString(), row, 15); // ssd type
-                dataTableModel.setValueAt(tempRowDataObject[i][5].toString(), row, 16); // max read
-                dataTableModel.setValueAt(tempRowDataObject[i][6].toString(), row, 17); // max write
+            } else if (dataObject[i][1].toString().equals("Stocare SSD")) {
+                int row = tableModel.getRowCount();
+                tableModel.addRow(new Object[] {});
+                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
+                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
+                tableModel.setValueAt(dataObject[i][2].toString(), row, 10); // series
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 14); // capacity
+                tableModel.setValueAt(dataObject[i][4].toString(), row, 15); // ssd type
+                tableModel.setValueAt(dataObject[i][5].toString(), row, 16); // max read
+                tableModel.setValueAt(dataObject[i][6].toString(), row, 17); // max write
 
-            } else if (tempRowDataObject[i][1].toString().equals("Sursa")) {
-                int row = dataTableModel.getRowCount();
-                dataTableModel.addRow(new Object[] {});
-                dataTableModel.setValueAt(tempRowDataObject[i][0].toString(), row, 0); //name
-                dataTableModel.setValueAt(tempRowDataObject[i][1].toString(), row, 1); //component type
-                dataTableModel.setValueAt(tempRowDataObject[i][2].toString(), row, 8); //modularity
-                dataTableModel.setValueAt(tempRowDataObject[i][3].toString(), row, 13); // power
-            } else if (tempRowDataObject[i][1].toString().equals("Placa video")) {
-                int row = dataTableModel.getRowCount();
-                dataTableModel.addRow(new Object[] {});
-                dataTableModel.setValueAt(tempRowDataObject[i][0].toString(), row, 0); //name
-                dataTableModel.setValueAt(tempRowDataObject[i][1].toString(), row, 1); //component type
-                dataTableModel.setValueAt(tempRowDataObject[i][2].toString(), row, 2); //chipset
-                dataTableModel.setValueAt(tempRowDataObject[i][3].toString(), row, 4); //memory type
-                dataTableModel.setValueAt(tempRowDataObject[i][4].toString(), row, 9); // memory effective freq
-                dataTableModel.setValueAt(tempRowDataObject[i][5].toString(), row, 10); //series
-                dataTableModel.setValueAt(tempRowDataObject[i][6].toString(), row, 13); //power
-                dataTableModel.setValueAt(tempRowDataObject[i][7].toString(), row, 18); //memory size
-                dataTableModel.setValueAt(tempRowDataObject[i][8].toString(), row, 19); //cooling system
+            } else if (dataObject[i][1].toString().equals("Sursa")) {
+                int row = tableModel.getRowCount();
+                tableModel.addRow(new Object[] {});
+                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
+                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
+                tableModel.setValueAt(dataObject[i][2].toString(), row, 8); //modularity
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 13); // power
+            } else if (dataObject[i][1].toString().equals("Placa video")) {
+                int row = tableModel.getRowCount();
+                tableModel.addRow(new Object[] {});
+                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
+                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
+                tableModel.setValueAt(dataObject[i][2].toString(), row, 2); //chipset
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 4); //memory type
+                tableModel.setValueAt(dataObject[i][4].toString(), row, 9); // memory effective freq
+                tableModel.setValueAt(dataObject[i][5].toString(), row, 10); //series
+                tableModel.setValueAt(dataObject[i][6].toString(), row, 13); //power
+                tableModel.setValueAt(dataObject[i][7].toString(), row, 18); //memory size
+                tableModel.setValueAt(dataObject[i][8].toString(), row, 19); //cooling system
             }
     }
     private void backToDefaultSort(){
@@ -922,6 +951,32 @@ public class Homepage {
         addDataToDataObject();
     }
 
+
+    private void addToCart() {
+        int selectedRow = dataTable.getSelectedRow();
+        addToCartButton.setEnabled(false);
+        cartBuyButton.setEnabled(true);
+        cartRemoveAllItemsButton.setEnabled(true);
+
+        String[] tempObject = (String[]) dataTableModel.getDataVector().elementAt(selectedRow).toArray(new String[0]);
+        cartTableModel.addRow(tempObject);
+
+        cartProductsLabel.setText(cartTable.getRowCount() + " produse");
+    }
+
+    private void deleteFromCart() {
+        int selectedRow = cartTable.getSelectedRow();
+        if (selectedRow == -1){
+            JOptionPane.showMessageDialog(null, "Nu ati selectat niciun produs!");
+        } else {
+            cartTableModel.removeRow(selectedRow);
+            cartProductsLabel.setText(cartTable.getRowCount() + " produse");
+        }
+        if (cartTable.getRowCount() == 0){
+            cartBuyButton.setEnabled(false);
+            cartRemoveAllItemsButton.setEnabled(false);
+        }
+    }
 
 }
 
