@@ -54,7 +54,7 @@ public class Homepage {
     private JComboBox coolingSystemComboBox;
     private JTextField socketField;
     private JTextField maxMemoryField;
-    private JTextField slotsNumberField;
+    private JTextField numberOfSlotsField;
     private JTextField memoryFreqField;
     private JLabel seriesLabel;
     private JLabel powerLabel;
@@ -86,16 +86,16 @@ public class Homepage {
     DefaultTableModel dataTableModel = (DefaultTableModel) dataTable.getModel();
     DefaultTableModel cartTableModel = (DefaultTableModel) cartTable.getModel();
 
-    Processor processor = new Processor("Ryzen 5 3600", "Procesor", "AM4", "642", "DDR2", "64", "3900", "32323YT5", "32", "4500", "50");
-    Processor processor1 = new Processor("Ryzen 7 3700X", "Procesor", "AM4", "643", "DDR3", "64", "3900", "32323YT6", "32", "4500", "50");
-    Processor processor2 = new Processor("Ryzen 9 3900X", "Procesor", "AM4", "644", "DDR4", "64", "3900", "32323YT7", "32", "4500", "50");
+    Processor processor = new Processor("Ryzen 5 3600", "Procesor", "AMD", "642", "DDR2", "64", "3900", "32323YT5", "32", "4500", "50");
+    Processor processor1 = new Processor("Ryzen 7 3700X", "Procesor", "INTEL", "643", "DDR3", "64", "3900", "32323YT6", "32", "4500", "50");
+    Processor processor2 = new Processor("Ryzen 9 3900X", "Procesor", "AMD", "644", "DDR4", "64", "3900", "32323YT7", "32", "4500", "50");
     Memory memory = new Memory("Corsair Vengeance LPX", "Memorie RAM", "DDR4", "64daw8dty", "3900", "8");
     Memory memory1 = new Memory("Kingston", "Memorie RAM", "DDR3", "63daw8dty", "3200", "16");
     Memory memory2 = new Memory("HyperX", "Memorie RAM", "DDR2", "62daw8dty", "4500", "32");
-    Motherboard motherboard = new Motherboard("AS-Rock", "Placa de baza", "AM4", "644", "DDR4", "128", "2", "4200");
+    Motherboard motherboard = new Motherboard("AS-Rock", "Placa de baza", "AMD", "644", "DDR4", "128", "2", "4200");
     Ssd ssd = new Ssd("WD-blue", "Stocare SSD", "56Y9DAWVB", "512", "M.2", "1500", "600");
     Psu psu = new Psu("MYRIA", "Sursa", "Da", "580");
-    Gpu gpu = new Gpu("NVIDIA", "Placa video", "ANSEL", "DDR6", "12500", "6dahjwgdjua","780","12", "Activ");
+    Gpu gpu = new Gpu("NVIDIA", "Placa video", "NVIDIA", "DDR6", "12500", "6dahjwgdjua","780","12", "Activ");
 
     Object[] productsDataObject = {
             processor,
@@ -119,6 +119,7 @@ public class Homepage {
         hideAllProperties();
         createButtonGroups();
         addHeadersToDataTableAndCartTable();
+        addButton.setEnabled(true);
         backToLoginPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,10 +129,13 @@ public class Homepage {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                restoreFieldsToDefault();
                 enableAllFields();
+                componentTypeComboBox.setEnabled(true);
                 saveButton.setEnabled(true);
                 addButton.setEnabled(false);
                 modifyButton.setEnabled(false);
+                showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
             }
         });
         modifyButton.addActionListener(new ActionListener() {
@@ -146,11 +150,12 @@ public class Homepage {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                disableAllFields();
+                saveProductChanges(componentTypeComboBox.getSelectedItem().toString());
                 saveButton.setEnabled(false);
-                addButton.setEnabled(true);
                 modifyButton.setEnabled(true);
-                showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
+                disableAllFields();
+                addDataToDataObject();
+
             }
         });
         containsRadioButton.addActionListener(new ActionListener() {
@@ -188,6 +193,7 @@ public class Homepage {
                     enableFilterProperties();
                     dataTableModel.setRowCount(0);
                     numberOfProductsLabel.setText("0 produse");
+                    addButton.setEnabled(true);
                 }
             }
         });
@@ -201,6 +207,7 @@ public class Homepage {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                disableAllFields();
                 populateFields(dataTable.getModel().getValueAt(dataTable.getSelectedRow(), 1).toString());
                 showProperties(componentTypeComboBox.getSelectedItem().toString());
                 modifyButton.setEnabled(true);
@@ -208,6 +215,37 @@ public class Homepage {
                 addButton.setEnabled(false);
             }
         });
+        componentTypeComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
+            }
+        });
+
+
+    }
+
+    private void restoreFieldsToDefault(){
+        nameField.setText("");
+        componentTypeComboBox.getModel().setSelectedItem("Selecteaza tipul componentei");
+        chipsetComboBox.getModel().setSelectedItem("Selecteaza tipul chipsetului");
+        socketField.setText("");
+        memoryTypeComboBox.getModel().setSelectedItem("Selecteaza tipul memoriei");
+        maxMemoryField.setText("");
+        numberOfSlotsField.setText("");
+        memoryFreqField.setText("");
+        modulationCheckBox.setSelected(false);
+        memoryEffectiveFreqField.setText("");
+        seriesField.setText("");
+        numberOfCoresField.setText("");
+        freqField.setText("");
+        powerField.setText("");
+        capacityField.setText("");
+        ssdTypeComboBox.getModel().setSelectedItem("Selecteaza tipul SSD-ului");
+        maxReadField.setText("");
+        maxWriteField.setText("");
+        memorySizeField.setText("");
+        coolingSystemComboBox.getModel().setSelectedItem("Selecteaza tipul sistemului de racire");
     }
 
     private void hideAllProperties() {
@@ -248,7 +286,7 @@ public class Homepage {
         coolingSystemComboBox.setVisible(false);
         socketField.setVisible(false);
         maxMemoryField.setVisible(false);
-        slotsNumberField.setVisible(false);
+        numberOfSlotsField.setVisible(false);
         memoryFreqField.setVisible(false);
         seriesField.setVisible(false);
         memoryEffectiveFreqField.setVisible(false);
@@ -271,7 +309,7 @@ public class Homepage {
                 maxMemoryLabel.setVisible(true);
                 maxMemoryField.setVisible(true);
                 numberOfSlotsLabel.setVisible(true);
-                slotsNumberField.setVisible(true);
+                numberOfSlotsField.setVisible(true);
                 memoryFreqLabel.setVisible(true);
                 memoryFreqField.setVisible(true);
                 break;
@@ -362,10 +400,11 @@ public class Homepage {
         coolingSystemComboBox.setEnabled(false);
         socketField.setEnabled(false);
         maxMemoryField.setEnabled(false);
-        slotsNumberField.setEnabled(false);
+        numberOfSlotsField.setEnabled(false);
         memoryFreqField.setEnabled(false);
         seriesField.setEnabled(false);
         memoryEffectiveFreqField.setEnabled(false);
+        componentTypeComboBox.setEnabled(false);
     }
 
     private void enableAllFields() {
@@ -384,7 +423,7 @@ public class Homepage {
         coolingSystemComboBox.setEnabled(true);
         socketField.setEnabled(true);
         maxMemoryField.setEnabled(true);
-        slotsNumberField.setEnabled(true);
+        numberOfSlotsField.setEnabled(true);
         memoryFreqField.setEnabled(true);
         seriesField.setEnabled(true);
         memoryEffectiveFreqField.setEnabled(true);
@@ -608,7 +647,7 @@ public class Homepage {
                     socketField.setText(tempRowDataObject[selectedRow][3].toString());
                     memoryTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][4].toString());
                     maxMemoryField.setText(tempRowDataObject[selectedRow][5].toString());
-                    slotsNumberField.setText(tempRowDataObject[selectedRow][6].toString());
+                    numberOfSlotsField.setText(tempRowDataObject[selectedRow][6].toString());
                     memoryFreqField.setText(tempRowDataObject[selectedRow][7].toString());
 
 
@@ -627,7 +666,7 @@ public class Homepage {
                     nameField.setText(tempRowDataObject[selectedRow][0].toString());
                     componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
                     modulationCheckBox.setSelected(tempRowDataObject[selectedRow][2].toString().equals("Da"));
-                    powerField.setText(tempRowDataObject[selectedRow][2].toString());
+                    powerField.setText(tempRowDataObject[selectedRow][3].toString());
 
                 } else if (tempRowDataObject[selectedRow][1].toString().equals("Placa video")) {
 
@@ -645,6 +684,129 @@ public class Homepage {
             }
         }
         propertiesTitleLabel.setText("Detalii produs");
+    }
+
+    private void saveProductChanges(String componentType){
+        int selectedRow = dataTable.getSelectedRow();
+        String name = nameField.getText();
+        String chipset = chipsetComboBox.getSelectedItem().toString();
+        String socket = socketField.getText();
+        String memoryType = memoryTypeComboBox.getSelectedItem().toString();
+        String maxMemory = maxMemoryField.getText();
+        String numberOfSlots = numberOfSlotsField.getText();
+        String memoryFreq = memoryFreqField.getText();
+        String modulation = modulationCheckBox.isSelected() ? "Da" : "Nu";
+        String memoryEffectiveFreq = memoryEffectiveFreqField.getText();
+        String series = seriesField.getText();
+        String numberOfCores = numberOfCoresField.getText();
+        String freq = freqField.getText();
+        String power = powerField.getText();
+        String capacity = capacityField.getText();
+        String ssdType = ssdTypeComboBox.getSelectedItem().toString();
+        String maxRead = maxReadField.getText();
+        String maxWrite = maxWriteField.getText();
+        String memorySize = memorySizeField.getText();
+        String coolingSystem = coolingSystemComboBox.getSelectedItem().toString();
+        errors = true;
+        if (productsRawDataObject[selectedRow][1].toString().equals("Procesor")) {
+            if (name.equals("") || chipset.equals("") || socket.equals("") || memoryType.equals("") || maxMemory.equals("") || memoryFreq.equals("") || series.equals("") || numberOfCores.equals("") || freq.equals("") || power.equals("")) {
+                JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+            } else {
+                for (int i = 0; i < productsDataObject.length; i++) {
+                    if (productsDataObject[i] instanceof Processor && ((Processor) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        ((Processor) productsDataObject[i]).updateProcessor(name, "Procesor" , chipset, socket, memoryType, maxMemory, memoryFreq, series, numberOfCores, freq, power);
+                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                        errors = false;
+                    }
+                }
+                if (errors) {
+                    popUpInCaseOfError();
+                }
+            }
+        } else if (productsRawDataObject[selectedRow][1].toString().equals("Placa de baza")) {
+            if (name.equals("") || chipset.equals("") || socket.equals("") || memoryType.equals("") || maxMemory.equals("") || numberOfSlots.equals("") || memoryFreq.equals("")) {
+                JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+            } else {
+                for (int i = 0; i < productsDataObject.length; i++) {
+                    if (productsDataObject[i] instanceof Motherboard && ((Motherboard) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        ((Motherboard) productsDataObject[i]).updateMotherboard(name, "Placa de baza", chipset, socket, memoryType, maxMemory, numberOfSlots, memoryFreq);
+                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                        errors = false;
+                    }
+                }
+                if (errors) {
+                    popUpInCaseOfError();
+                }
+            }
+        } else if (productsRawDataObject[selectedRow][1].toString().equals("Stocare SSD")) {
+            if (name.equals("") || series.equals("") || capacity.equals("") || ssdType.equals("") || maxRead.equals("") || maxWrite.equals("")) {
+                JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+            } else {
+                for (int i = 0; i < productsDataObject.length; i++) {
+                    if (productsDataObject[i] instanceof Ssd && ((Ssd) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        ((Ssd) productsDataObject[i]).updateSsd(name, "Stocare SSD", series, capacity, ssdType, maxRead, maxWrite);
+                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                        errors = false;
+                    }
+                }
+                if (errors) {
+                    popUpInCaseOfError();
+                }
+            }
+        } else if (productsRawDataObject[selectedRow][1].toString().equals("Sursa")) {
+            if (name.equals("") || power.equals("")) {
+                JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+            } else {
+                for (int i = 0; i < productsDataObject.length; i++) {
+                    if (productsDataObject[i] instanceof Psu && ((Psu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        ((Psu) productsDataObject[i]).updatePsu(name, "Sursa", modulation, power);
+                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                        errors = false;
+                    }
+                }
+                if (errors) {
+                    popUpInCaseOfError();
+                }
+            }
+        } else if (productsRawDataObject[selectedRow][1].toString().equals("Memorie RAM")) {
+            if (name.equals("") || memoryType.equals("") || series.equals("") || freq.equals("") || capacity.equals("")) {
+                JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+            } else {
+                for (int i = 0; i < productsDataObject.length; i++) {
+                    if (productsDataObject[i] instanceof Memory && ((Memory) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        ((Memory) productsDataObject[i]).updateMemory(name, "Memorie RAM", memoryType, series, freq, capacity);
+                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                        errors = false;
+                    }
+                }
+                if (errors) {
+                    popUpInCaseOfError();
+                }
+            }
+        } else if(productsRawDataObject[selectedRow][1].toString().equals("Placa video")) {
+            if (name.equals("") || chipset.equals("") || memoryType.equals("") || memoryEffectiveFreq.equals("") || series.equals("") || power.equals("") || memorySize.equals("") || coolingSystem.equals("")){
+                JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+            } else {
+                for (int i = 0; i < productsDataObject.length; i++) {
+                    if (productsDataObject[i] instanceof Gpu && ((Gpu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        ((Gpu) productsDataObject[i]).updateGpu(name, "Placa video", series, chipset, memorySize, memoryType, memoryFreq, memoryEffectiveFreq, power);
+                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                        errors = false;
+                    }
+                }
+                if (errors) {
+                    popUpInCaseOfError();
+                }
+            }
+        }
+        errors = true;
+    }
+    private void popUpInCaseOfError() {
+        JOptionPane.showMessageDialog(null, "A aparut o eroare!");
+        saveButton.setEnabled(false);
+        modifyButton.setEnabled(false);
+        allDataCheckBox.setEnabled(false);
+        dataTableModel.setRowCount(0);
     }
 }
 

@@ -146,13 +146,6 @@ public class ClientsAndReceiptsPage {
                 applicationInterface.showHomePage();
             }
         });
-
-        startsWithClientsRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
         receiptDataTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

@@ -66,5 +66,14 @@ public class Memory {
     public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
+
+    public void updateMemory(String name, String componentType, String memoryType, String series, String freq, String capacity){
+        this.name = name;
+        this.componentType = componentType;
+        this.memoryType = memoryType;
+        this.series = series;
+        this.freq = freq;
+        this.capacity = capacity;
+    }
     
 }

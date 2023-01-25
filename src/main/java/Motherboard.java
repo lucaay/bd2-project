@@ -89,4 +89,15 @@ public class Motherboard {
     }
 
 
+    public void updateMotherboard(String name, String componentType, String chipset, String socket, String memoryType, String maxMemory, String memorySlots, String memoryFreq) {
+        this.name = name;
+        this.componentType = componentType;
+        this.chipset = chipset;
+        this.socket = socket;
+        this.memoryType = memoryType;
+        this.maxMemory = maxMemory;
+        this.memorySlots = memorySlots;
+        this.memoryFreq = memoryFreq;
+    }
+
 }

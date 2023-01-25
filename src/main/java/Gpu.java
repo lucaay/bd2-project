@@ -96,4 +96,16 @@ public class Gpu {
     public void setCoolingSystem(String coolingSystem) {
         this.coolingSystem = coolingSystem;
     }
+
+    public void updateGpu(String name, String componentType, String chipset, String memoryType, String memoryEffectiveFreq, String series, String power, String memorySize, String coolingSystem) {
+        this.name = name;
+        this.componentType = componentType;
+        this.chipset = chipset;
+        this.memoryType = memoryType;
+        this.memoryEffectiveFreq = memoryEffectiveFreq;
+        this.series = series;
+        this.power = power;
+        this.memorySize = memorySize;
+        this.coolingSystem = coolingSystem;
+    }
 }

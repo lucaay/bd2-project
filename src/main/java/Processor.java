@@ -115,4 +115,18 @@ public class Processor {
         this.power = power;
     }
 
+    public void updateProcessor(String name, String componentType, String chipset, String socket, String memoryType, String maxMemory, String memoryFreq, String series, String numberOfCores, String freq, String power){
+        this.name = name;
+        this.componentType = componentType;
+        this.chipset = chipset;
+        this.socket = socket;
+        this.memoryType = memoryType;
+        this.maxMemory = maxMemory;
+        this.memoryFreq = memoryFreq;
+        this.series = series;
+        this.numberOfCores = numberOfCores;
+        this.freq = freq;
+        this.power = power;
+    }
+
 }

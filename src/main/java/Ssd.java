@@ -76,4 +76,14 @@ public class Ssd {
     public void setMaxWrite(String maxWrite) {
         this.maxWrite = maxWrite;
     }
+
+    public void updateSsd(String name, String componentType, String series, String capacity, String ssdType, String maxRead, String maxWrite){
+        this.name = name;
+        this.componentType = componentType;
+        this.series = series;
+        this.capacity = capacity;
+        this.ssdType = ssdType;
+        this.maxRead = maxRead;
+        this.maxWrite = maxWrite;
+    }
 }

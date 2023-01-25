@@ -47,4 +47,11 @@ public class Psu {
     public void setPower(String power) {
         this.power = power;
     }
+
+    public void updatePsu(String name, String componentType, String modularity,  String power){
+        this.name = name;
+        this.componentType = componentType;
+        this.modularity = modularity;
+        this.power = power;
+    }
 }
