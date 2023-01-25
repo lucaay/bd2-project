@@ -411,7 +411,7 @@
           </component>
         </children>
       </grid>
-      <grid id="8229c" binding="dataPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="8229c" binding="dataPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -423,7 +423,7 @@
         <children>
           <scrollpane id="df5d2" binding="dataScrollPane">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalScrollBarPolicy value="32"/>
@@ -440,10 +440,18 @@
           </scrollpane>
           <component id="a857e" class="javax.swing.JLabel" binding="dataPanelTitleLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Lista produse"/>
+            </properties>
+          </component>
+          <component id="c0438" class="javax.swing.JLabel" binding="numberOfProductsLabel">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="0 Produse"/>
             </properties>
           </component>
         </children>

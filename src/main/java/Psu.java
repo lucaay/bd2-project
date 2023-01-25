@@ -1,11 +1,11 @@
 public class Psu {
     private String name;
     private String componentType;
-    private boolean modularity;
+    private String modularity;
     private String power;
 
 
-    public Psu(String name, String componentType, boolean modularity,  String power) {
+    public Psu(String name, String componentType, String modularity,  String power) {
         this.name = name;
         this.componentType = componentType;
         this.modularity = modularity;
@@ -32,11 +32,11 @@ public class Psu {
         this.componentType = componentType;
     }
 
-    public boolean isModularity() {
+    public String isModularity() {
         return modularity;
     }
 
-    public void setModularity(boolean modularity) {
+    public void setModularity(String modularity) {
         this.modularity = modularity;
     }
 

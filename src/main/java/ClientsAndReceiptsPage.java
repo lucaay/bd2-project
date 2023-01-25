@@ -104,9 +104,9 @@ public class ClientsAndReceiptsPage {
         receiptDataTable.setDefaultEditor(Object.class, null);
         stateComboBox.getModel().setSelectedItem("Selecteaza judetul");
         hideAllProperties();
+        createButtonGroups();
         addHeadersToClientTable();
         addHeadersToReceiptTable();
-        createButtonGroups();
         setComboBoxesData();
 
         allDataCheckBox.addActionListener(new ActionListener() {
