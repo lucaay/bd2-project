@@ -79,17 +79,25 @@ public class ClientsAndReceiptsPage {
     ButtonGroup tableTypeReceiptsButtonGroup = new ButtonGroup();
     ButtonGroup filterTypeReceiptsButtonGroup = new ButtonGroup();
     ButtonGroup orderTypeReceiptsButtonGroup = new ButtonGroup();
-
-    Object[][] clientsRowDataObject = {
-            {"1", "Ion", "Popescu", "test@email.com", "0722222222", "București", "Sector 2", "Str. Test 1"},
-            {"2", "Gion", "aLECU", "test2@email.com", "0722234222", "Galați", "Barcea", "Str. Test 2"},
-            {"3", "alex", "munteanu", "test3@email.com", "07222223232", "Brașov", "Bod", "Str. Test 3"},
+    Client client1 = new Client("1", "Ion", "Popescu", "test@email.com", "0722222222", "București", "Sector 2", "Str. Test 1");
+    Client client2 = new Client("2", "Gion", "aLECU", "test2@email.com", "0722234222", "Galați", "Barcea", "Str. Test 2");
+    Client client3 = new Client("3", "alex", "munteanu", "test3@email.com", "07222223232", "Brașov", "Bod", "Str. Test 3");
+    Client[] clientsDataObject = {
+            client1,
+            client2,
+            client3,
     };
-    Object[][] receiptsRowDataObject = {
-            {"121", "256", "2020-01-01", "100", "PLACA DE BAZA, PROCESOR, RAM"},
-            {"256", "354", "2020-01-02", "200", "PLACA DE BAZA, PROCESOR, RAM, HDD"},
-            {"334", "359", "2020-01-05", "300", "PLACA DE BAZA, PROCESOR, RAM, HDD, SSD"},
+    Object[][] clientsRowDataObject;
+    Receipt receipt1 = new Receipt("121", "256", "2020-01-01", "100", "PLACA DE BAZA, PROCESOR, RAM");
+    Receipt receipt2 = new Receipt("256", "354", "2020-01-02", "200", "PLACA DE BAZA, PROCESOR, RAM, HDD");
+    Receipt receipt3 = new Receipt("334", "359", "2020-01-05", "300", "PLACA DE BAZA, PROCESOR, RAM, HDD, SSD");
+    Receipt[] receiptsDataObject = {
+            receipt1,
+            receipt2,
+            receipt3,
     };
+    Object[][] receiptsRowDataObject;
+    private boolean errors = false;
 
     public ClientsAndReceiptsPage(ApplicationInterface applicationInterface) {
         clientDataTable.setDefaultEditor(Object.class, null);
@@ -151,7 +159,9 @@ public class ClientsAndReceiptsPage {
                 super.mouseClicked(e);
                 showReceiptProperties();
                 populateReceiptFields();
+                disableReceiptProperties();
                 modifyReceiptButton.setEnabled(true);
+                saveReceiptButton.setEnabled(false);
                 modifyClientButton.setEnabled(false);
                 saveClientButton.setEnabled(false);
             }
@@ -162,7 +172,9 @@ public class ClientsAndReceiptsPage {
                 super.mouseClicked(e);
                 showClientProperties();
                 populateClientFields();
+                disableClientProperties();
                 modifyClientButton.setEnabled(true);
+                saveClientButton.setEnabled(false);
                 modifyReceiptButton.setEnabled(false);
                 saveReceiptButton.setEnabled(false);
             }
@@ -170,6 +182,7 @@ public class ClientsAndReceiptsPage {
         modifyReceiptButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                enableReceiptProperties();
                 saveReceiptButton.setEnabled(true);
                 modifyReceiptButton.setEnabled(false);
             }
@@ -177,6 +190,7 @@ public class ClientsAndReceiptsPage {
         modifyClientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                enableClientProperties();
                 saveClientButton.setEnabled(true);
                 modifyClientButton.setEnabled(false);
             }
@@ -184,45 +198,27 @@ public class ClientsAndReceiptsPage {
         saveReceiptButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                saveReceiptChanges();
                 saveReceiptButton.setEnabled(false);
                 modifyReceiptButton.setEnabled(true);
+                disableReceiptProperties();
+                addDataToReceiptTable();
             }
         });
         saveClientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                saveClientChanges();
                 saveClientButton.setEnabled(false);
                 modifyClientButton.setEnabled(true);
+                disableClientProperties();
+                addDataToClientTable();
             }
         });
         stateComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-            }
-        });
-        modifyClientButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                enableClientProperties();
-            }
-        });
-        saveClientButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                disableClientProperties();
-            }
-        });
-        modifyReceiptButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                enableReceiptProperties();
-            }
-        });
-        saveReceiptButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                disableReceiptProperties();
             }
         });
         receiptRadioButton.addActionListener(new ActionListener() {
@@ -313,6 +309,20 @@ public class ClientsAndReceiptsPage {
         });
     }
 
+    private void createClientsRowDataObject() {
+        clientsRowDataObject = new Object[clientsDataObject.length][];
+        for (int i = 0; i < clientsDataObject.length; i++) {
+            clientsRowDataObject[i] = clientsDataObject[i].clientObject();
+        }
+    }
+
+    private void createReceiptsRowDataObject() {
+        receiptsRowDataObject = new Object[receiptsDataObject.length][];
+        for (int i = 0; i < receiptsDataObject.length; i++) {
+            receiptsRowDataObject[i] = receiptsDataObject[i].receiptObject();
+        }
+    }
+
     private void hideAllProperties() {
         for (Component component : propertiesPanel.getComponents()) {
             component.setVisible(false);
@@ -354,7 +364,6 @@ public class ClientsAndReceiptsPage {
     }
 
     private void enableClientProperties() {
-        idField.setEnabled(true);
         nameField.setEnabled(true);
         lastNameField.setEnabled(true);
         emailField.setEnabled(true);
@@ -377,7 +386,6 @@ public class ClientsAndReceiptsPage {
     }
 
     private void enableReceiptProperties() {
-        idField.setEnabled(true);
         clientIdField.setEnabled(true);
         receiptDateField.setEnabled(true);
         totalPriceField.setEnabled(true);
@@ -440,10 +448,14 @@ public class ClientsAndReceiptsPage {
             receiptTableModel.addColumn(headerObject[i]);
         }
     }
+
     private void addDataToClientTable() {
+        createClientsRowDataObject();
         hideAllProperties();
         clientTableModel.setRowCount(0);
         backToDefaultClientsSort();
+        modifyClientButton.setEnabled(false);
+        saveClientButton.setEnabled(false);
         Object[][] tempRowDataObject = clientsRowDataObject;
         if (alphabeticalOrderClientsRadioButton.isSelected()){
             Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
@@ -477,8 +489,11 @@ public class ClientsAndReceiptsPage {
         numberOfClientsLabel.setText(clientTableModel.getRowCount() + " clienti");
     }
     private void addDataToReceiptTable() {
+        createReceiptsRowDataObject();
         receiptTableModel.setRowCount(0);
         backToDefaultReceiptsSort();
+        modifyReceiptButton.setEnabled(false);
+        saveReceiptButton.setEnabled(false);
         Object[][] tempRowDataObject = receiptsRowDataObject;
         if (idOrderReceiptsRadioButton.isSelected()){
             Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
@@ -572,26 +587,6 @@ public class ClientsAndReceiptsPage {
         });
     }
 
-    private void populateClientFields() {
-        int selectedRow = clientDataTable.getSelectedRow();
-        Object[][] tempRowDataObject = clientsRowDataObject;
-        if (selectedRow != -1) {
-            for (int i = 0; i < tempRowDataObject.length; i++) {
-                if (tempRowDataObject[selectedRow][0].toString().equals(clientTableModel.getValueAt(selectedRow, 0).toString())) {
-                    propertiesTitleLabel.setText("Se incarca...");
-                    idField.setText(tempRowDataObject[selectedRow][0].toString());
-                    nameField.setText(tempRowDataObject[selectedRow][1].toString());
-                    lastNameField.setText(tempRowDataObject[selectedRow][2].toString());
-                    emailField.setText(tempRowDataObject[selectedRow][3].toString());
-                    phoneField.setText(tempRowDataObject[selectedRow][4].toString());
-                    normalizeComboBoxValues(stateComboBox, cityComboBox, tempRowDataObject, selectedRow);
-                    addressField.setText(tempRowDataObject[selectedRow][7].toString());
-                }
-            }
-        }
-        propertiesTitleLabel.setText("Detalii inregistrare");
-    }
-
     private void normalizeComboBoxValues(JComboBox stateComboBox, JComboBox cityComboBox, Object[][] tempRowDataObject, int selectedRow){
         String stateWithDiacritics = tempRowDataObject[selectedRow][5].toString();
         String stateWithoutDiacritics = Normalizer.normalize(stateWithDiacritics, Normalizer.Form.NFD)
@@ -614,11 +609,31 @@ public class ClientsAndReceiptsPage {
             String comboBoxCityWithDiacritics = cityComboBox.getItemAt(j).toString();
             String comboBoxCityWithoutDiacritics = Normalizer.normalize(comboBoxCityWithDiacritics, Normalizer.Form.NFD)
                     .replaceAll("[^\\p{ASCII}]", "");
-            if (comboBoxCityWithoutDiacritics.equals(cityWithoutDiacritics)){
+            if (comboBoxCityWithoutDiacritics.equals(cityWithoutDiacritics)) {
                 cityComboBox.setSelectedIndex(j);
                 break;
             }
         }
+    }
+
+    private void populateClientFields() {
+        int selectedRow = clientDataTable.getSelectedRow();
+        Object[][] tempRowDataObject = clientsRowDataObject;
+        if (selectedRow != -1) {
+            for (int i = 0; i < tempRowDataObject.length; i++) {
+                if (tempRowDataObject[selectedRow][0].toString().equals(clientTableModel.getValueAt(selectedRow, 0).toString())) {
+                    propertiesTitleLabel.setText("Se incarca...");
+                    idField.setText(tempRowDataObject[selectedRow][0].toString());
+                    nameField.setText(tempRowDataObject[selectedRow][1].toString());
+                    lastNameField.setText(tempRowDataObject[selectedRow][2].toString());
+                    emailField.setText(tempRowDataObject[selectedRow][3].toString());
+                    phoneField.setText(tempRowDataObject[selectedRow][4].toString());
+                    normalizeComboBoxValues(stateComboBox, cityComboBox, tempRowDataObject, selectedRow);
+                    addressField.setText(tempRowDataObject[selectedRow][7].toString());
+                }
+            }
+        }
+        propertiesTitleLabel.setText("Detalii inregistrare");
     }
 
     private void populateReceiptFields() {
@@ -633,11 +648,69 @@ public class ClientsAndReceiptsPage {
                     receiptDateField.setText(tempRowDataObject[selectedRow][2].toString());
                     totalPriceField.setText(tempRowDataObject[selectedRow][3].toString());
                     String tempArea = tempRowDataObject[selectedRow][4].toString();
-//                    String[] tempAreaArray = tempArea.split(",");
                     receiptProductsTextArea.setText(tempArea);
                 }
             }
         }
         propertiesTitleLabel.setText("Detalii inregistrare");
     }
+
+    private void saveClientChanges() {
+        String id = idField.getText();
+        String name = nameField.getText();
+        String lastName = lastNameField.getText();
+        String email = emailField.getText();
+        String phone = phoneField.getText();
+        String state = stateComboBox.getSelectedItem().toString();
+        String city = cityComboBox.getSelectedItem().toString();
+        String address = addressField.getText();
+        errors = true;
+        if (id.equals("") || name.equals("") || lastName.equals("") || email.equals("") || phone.equals("") || state.equals("") || city.equals("") || address.equals("")) {
+            JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+        } else if (!email.contains("@") && !email.contains(".")) {
+            JOptionPane.showMessageDialog(null, "Adresa de email nu este valida!");
+        } else if (phone.length() != 10) {
+            JOptionPane.showMessageDialog(null, "Numarul de telefon trebuie sa contina 10 cifre!");
+        }else{
+            errors = false;
+        }
+        if (!errors) {
+            for (int i = 0; i < clientsDataObject.length; i++) {
+                if (clientsDataObject[i].getId().equals(id)) {
+                    clientsDataObject[i].updateClient(id, name, lastName, email, phone, state, city, address);
+                    JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                    errors = false;
+                }
+            }
+        }
+    }
+
+    private void saveReceiptChanges() {
+        String id = idField.getText();
+        String clientId = clientIdField.getText();
+        String receiptDate = receiptDateField.getText();
+        String totalPrice = totalPriceField.getText();
+        String receiptProducts = receiptProductsTextArea.getText();
+        errors = true;
+        if (id.equals("") || clientId.equals("") || receiptDate.equals("") || totalPrice.equals("") || receiptProducts.equals("")) {
+            JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
+        } else {
+            for (int i = 0; i < receiptsDataObject.length; i++) {
+                if (receiptsDataObject[i].getId().equals(id)) {
+                    receiptsDataObject[i].updateReceipt(id, clientId, receiptDate, totalPrice, receiptProducts);
+                    JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                    errors = false;
+                }
+            }
+            if (errors) {
+                JOptionPane.showMessageDialog(null, "A aparut o eroare!");
+                saveReceiptButton.setEnabled(false);
+                modifyReceiptButton.setEnabled(false);
+                allDataCheckBox.setEnabled(false);
+                receiptTableModel.setRowCount(0);
+            }
+        }
+        errors = true;
+    }
+
 }
