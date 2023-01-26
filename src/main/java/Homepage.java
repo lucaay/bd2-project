@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -131,6 +132,7 @@ public class Homepage {
                 componentTypeComboBox.setEnabled(true);
                 saveButton.setEnabled(true);
                 addButton.setEnabled(false);
+                seriesField.setEnabled(true);
                 modifyButton.setEnabled(false);
                 showProperties(componentTypeComboBox.getSelectedItem().toString()); // show properties for the selected component type
                 addNewProductIsOn = true;
@@ -197,7 +199,7 @@ public class Homepage {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 disableAllFields();
-                populateFields(dataTable.getModel().getValueAt(dataTable.getSelectedRow(), 1).toString());
+                populateFields();
                 showProperties(componentTypeComboBox.getSelectedItem().toString());
                 modifyButton.setEnabled(true);
                 saveButton.setEnabled(false);
@@ -521,9 +523,7 @@ public class Homepage {
         productsDataObject = mysqlCon.retrieveProducts();
         productsRawDataObject = new Object[productsDataObject.length][];
         for (int i = 0; i < productsDataObject.length; i++) {
-            ArrayList<Object> tempList = new ArrayList<>(Arrays.asList((Object[]) productsDataObject[i]));
-            tempList.removeIf(Objects::isNull); // remove null values from array
-            productsRawDataObject[i] = tempList.toArray();
+            productsRawDataObject[i] = (Object[]) productsDataObject[i];
         }
     }
 
@@ -580,77 +580,57 @@ public class Homepage {
         }
         numberOfProductsLabel.setText(dataTableModel.getRowCount() + " produse");
     }
+
+    private void addtotablesample(int i ,Object[][] dataObject, DefaultTableModel tableModel){
+        int row = tableModel.getRowCount();
+        tableModel.addRow(new Object[] {});
+        tableModel.setValueAt(dataObject[i][0].toString(), row, 0);
+        tableModel.setValueAt(dataObject[i][1].toString(), row, 1);
+        tableModel.setValueAt(dataObject[i][2].toString(), row, 2);
+        tableModel.setValueAt(dataObject[i][3].toString(), row, 3);
+        tableModel.setValueAt(dataObject[i][4].toString(), row, 4);
+        tableModel.setValueAt(dataObject[i][5].toString(), row, 5);
+        tableModel.setValueAt(dataObject[i][6].toString(), row, 6);
+        tableModel.setValueAt(dataObject[i][7].toString(), row, 7);
+        tableModel.setValueAt(dataObject[i][8].toString(), row, 8);
+        tableModel.setValueAt(dataObject[i][9].toString(), row, 9);
+        tableModel.setValueAt(dataObject[i][10].toString(), row, 10);
+        tableModel.setValueAt(dataObject[i][11].toString(), row, 11);
+        tableModel.setValueAt(dataObject[i][12].toString(), row, 12);
+        tableModel.setValueAt(dataObject[i][13].toString(), row, 13);
+        tableModel.setValueAt(dataObject[i][14].toString(), row, 14);
+        tableModel.setValueAt(dataObject[i][15].toString(), row, 15);
+        tableModel.setValueAt(dataObject[i][16].toString(), row, 16);
+        tableModel.setValueAt(dataObject[i][17].toString(), row, 17);
+        tableModel.setValueAt(dataObject[i][18].toString(), row, 18);
+        tableModel.setValueAt(dataObject[i][19].toString(), row, 19);
+
+    }
+    private void addtofieldssample(Object[][] dataObject){
+        int row = dataTable.getSelectedRow();
+        nameField.setText(dataObject[row][0].toString());
+        componentTypeComboBox.setSelectedItem(dataObject[row][1].toString());
+        chipsetComboBox.setSelectedItem(dataObject[row][2].toString());
+        socketField.setText(dataObject[row][3].toString());
+        memoryTypeComboBox.setSelectedItem(dataObject[row][4].toString());
+        maxMemoryField.setText(dataObject[row][5].toString());
+        numberOfSlotsLabel.setText(dataObject[row][6].toString());
+        memoryFreqField.setText(dataObject[row][7].toString());
+        modulationCheckBox.setSelected(dataObject[row][8].toString() == "Da");
+        memoryEffectiveFreqField.setText(dataObject[row][9].toString());
+        seriesField.setText(dataObject[row][10].toString());
+        numberOfCoresField.setText(dataObject[row][11].toString());
+        freqField.setText(dataObject[row][12].toString());
+        powerField.setText(dataObject[row][13].toString());
+        capacityField.setText(dataObject[row][14].toString());
+        ssdTypeComboBox.setSelectedItem(dataObject[row][15].toString());
+        maxReadField.setText(dataObject[row][16].toString());
+        maxWriteField.setText(dataObject[row][17].toString());
+        memorySizeField.setText(dataObject[row][18].toString());
+        coolingSystemComboBox.setSelectedItem(dataObject[row][19].toString());
+    }
     private void addDataAtSpecificIndex(int i, Object[][] dataObject, DefaultTableModel tableModel){
-            if (dataObject[i][1].toString().equals("Procesor")) {
-                int row = tableModel.getRowCount();
-                tableModel.addRow(new Object[] {});
-                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
-                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
-                tableModel.setValueAt(dataObject[i][2].toString(), row, 2); // chipset
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 3); // socket
-                tableModel.setValueAt(dataObject[i][4].toString(), row, 4); //memory type
-                tableModel.setValueAt(dataObject[i][5].toString(), row, 5); //max memory
-                tableModel.setValueAt(dataObject[i][6].toString(), row, 7); //memory freq
-                tableModel.setValueAt(dataObject[i][7].toString(), row, 10); // series
-                tableModel.setValueAt(dataObject[i][8].toString(), row, 11); // number of cores
-                tableModel.setValueAt(dataObject[i][9].toString(), row, 12); // frequency
-                tableModel.setValueAt(dataObject[i][10].toString(), row, 13); // power
-
-            } else if (dataObject[i][1].toString().equals("Memorie RAM")) {
-                int row = tableModel.getRowCount();
-                tableModel.addRow(new Object[] {});
-                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
-                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
-                tableModel.setValueAt(dataObject[i][2].toString(), row, 4); // memory type
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 10); // series
-                tableModel.setValueAt(dataObject[i][4].toString(), row, 12); // freq
-                tableModel.setValueAt(dataObject[i][5].toString(), row, 14); // capacity
-            } else if (dataObject[i][1].toString().equals("Placa de baza")) {
-                int row = tableModel.getRowCount();
-                tableModel.addRow(new Object[] {});
-                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
-                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
-                tableModel.setValueAt(dataObject[i][2].toString(), row, 2); // chipset
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 3); // socket
-                tableModel.setValueAt(dataObject[i][4].toString(), row, 4); // memory type
-                tableModel.setValueAt(dataObject[i][5].toString(), row, 5); //max memory
-                tableModel.setValueAt(dataObject[i][6].toString(), row, 6); //memory slots
-                tableModel.setValueAt(dataObject[i][7].toString(), row, 7); //memory freq
-                tableModel.setValueAt(dataObject[i][8].toString(), row, 10); // series
-
-
-            } else if (dataObject[i][1].toString().equals("Stocare SSD")) {
-                int row = tableModel.getRowCount();
-                tableModel.addRow(new Object[] {});
-                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
-                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
-                tableModel.setValueAt(dataObject[i][2].toString(), row, 10); // series
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 14); // capacity
-                tableModel.setValueAt(dataObject[i][4].toString(), row, 15); // ssd type
-                tableModel.setValueAt(dataObject[i][5].toString(), row, 16); // max read
-                tableModel.setValueAt(dataObject[i][6].toString(), row, 17); // max write
-
-            } else if (dataObject[i][1].toString().equals("Sursa")) {
-                int row = tableModel.getRowCount();
-                tableModel.addRow(new Object[] {});
-                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
-                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
-                tableModel.setValueAt(dataObject[i][2].toString(), row, 8); //modularity
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 10); // series
-                tableModel.setValueAt(dataObject[i][4].toString(), row, 13); // power
-            } else if (dataObject[i][1].toString().equals("Placa video")) {
-                int row = tableModel.getRowCount();
-                tableModel.addRow(new Object[] {});
-                tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
-                tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
-                tableModel.setValueAt(dataObject[i][2].toString(), row, 2); //chipset
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 4); //memory type
-                tableModel.setValueAt(dataObject[i][4].toString(), row, 9); // memory effective freq
-                tableModel.setValueAt(dataObject[i][5].toString(), row, 10); //series
-                tableModel.setValueAt(dataObject[i][6].toString(), row, 13); //power
-                tableModel.setValueAt(dataObject[i][7].toString(), row, 18); //memory size
-                tableModel.setValueAt(dataObject[i][8].toString(), row, 19); //cooling system
-            }
+        addtotablesample(i,dataObject,tableModel);
     }
     private void backToDefaultSort(){
         //compare names (String)
@@ -666,83 +646,9 @@ public class Homepage {
         });
     }
 
-    private void populateFields(String componentType){
-        int selectedRow = dataTable.getSelectedRow();
+    private void populateFields(){
         Object[][] tempRowDataObject = productsRawDataObject;
-        if (selectedRow != -1) {
-            propertiesTitleLabel.setText("Se incarca...");
-            for (int i = 0; i < tempRowDataObject.length; i++) {
-                if (tempRowDataObject[selectedRow][1].toString().equals("Procesor")) {
-
-                    nameField.setText(tempRowDataObject[selectedRow][0].toString());
-                    componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
-                    chipsetComboBox.setSelectedItem(tempRowDataObject[selectedRow][2].toString());
-                    socketField.setText(tempRowDataObject[selectedRow][3].toString());
-                    memoryTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][4].toString());
-                    maxMemoryField.setText(tempRowDataObject[selectedRow][5].toString());
-                    memoryFreqField.setText(tempRowDataObject[selectedRow][6].toString());
-                    seriesField.setText(tempRowDataObject[selectedRow][7].toString());
-                    numberOfCoresField.setText(tempRowDataObject[selectedRow][8].toString());
-                    freqField.setText(tempRowDataObject[selectedRow][9].toString());
-                    powerField.setText(tempRowDataObject[selectedRow][10].toString());
-
-                } else if (tempRowDataObject[selectedRow][1].toString().equals("Memorie RAM")) {
-
-                    nameField.setText(tempRowDataObject[selectedRow][0].toString());
-                    componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
-                    memoryTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][2].toString());
-                    seriesField.setText(tempRowDataObject[selectedRow][3].toString());
-                    freqField.setText(tempRowDataObject[selectedRow][4].toString());
-                    capacityField.setText(tempRowDataObject[selectedRow][5].toString());
-
-                } else if (tempRowDataObject[selectedRow][1].toString().equals("Placa de baza")) {
-
-                    nameField.setText(tempRowDataObject[selectedRow][0].toString());
-                    componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
-                    chipsetComboBox.setSelectedItem(tempRowDataObject[selectedRow][2].toString());
-                    socketField.setText(tempRowDataObject[selectedRow][3].toString());
-                    memoryTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][4].toString());
-                    maxMemoryField.setText(tempRowDataObject[selectedRow][5].toString());
-                    numberOfSlotsField.setText(tempRowDataObject[selectedRow][6].toString());
-                    memoryFreqField.setText(tempRowDataObject[selectedRow][7].toString());
-                    seriesField.setText(tempRowDataObject[selectedRow][8].toString());
-
-
-                } else if (tempRowDataObject[selectedRow][1].toString().equals("Stocare SSD")) {
-
-                    nameField.setText(tempRowDataObject[selectedRow][0].toString());
-                    componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
-                    seriesField.setText(tempRowDataObject[selectedRow][2].toString());
-                    capacityField.setText(tempRowDataObject[selectedRow][3].toString());
-                    ssdTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][4].toString());
-                    maxReadField.setText(tempRowDataObject[selectedRow][5].toString());
-                    maxWriteField.setText(tempRowDataObject[selectedRow][6].toString());
-
-                } else if (tempRowDataObject[selectedRow][1].toString().equals("Sursa")) {
-
-                    nameField.setText(tempRowDataObject[selectedRow][0].toString());
-                    componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
-                    modulationCheckBox.setSelected(tempRowDataObject[selectedRow][2].toString().equals("Da"));
-                    seriesField.setText(tempRowDataObject[selectedRow][3].toString());
-                    powerField.setText(tempRowDataObject[selectedRow][4].toString());
-
-
-                } else if (tempRowDataObject[selectedRow][1].toString().equals("Placa video")) {
-
-                    nameField.setText(tempRowDataObject[selectedRow][0].toString());
-                    componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
-                    chipsetComboBox.setSelectedItem(tempRowDataObject[selectedRow][2].toString());
-                    memoryTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][3].toString());
-                    memoryEffectiveFreqField.setText(tempRowDataObject[selectedRow][4].toString());
-                    seriesField.setText(tempRowDataObject[selectedRow][5].toString());
-                    powerField.setText(tempRowDataObject[selectedRow][6].toString());
-                    memorySizeField.setText(tempRowDataObject[selectedRow][7].toString());
-                    coolingSystemComboBox.setSelectedItem(tempRowDataObject[selectedRow][8].toString());
-
-                }
-            }
-        }
-        propertiesTitleLabel.setText("Detalii produs");
+        addtofieldssample(tempRowDataObject);
     }
 
     private void saveProductChanges(String componentType){
@@ -772,7 +678,7 @@ public class Homepage {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
                 if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    mysqlCon.updateProduct(name, "Procesor", chipset, socket, memoryType, maxMemory, null, memoryFreq, null, null, series, numberOfCores, freq, power, null, null, null, null, null, null);
+                    mysqlCon.updateProduct(name, chipset, socket, memoryType, maxMemory, null, memoryFreq, null, null, series, numberOfCores, freq, power, null, null, null, null, null, null);
                     JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                     errors = false;
                 }
@@ -781,13 +687,11 @@ public class Homepage {
             if (name.equals("") || chipset.equals("") || socket.equals("") || memoryType.equals("") || maxMemory.equals("") || numberOfSlots.equals("") || memoryFreq.equals("") || series.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
-                for (int i = 0; i < productsDataObject.length; i++) {
-                    if (productsDataObject[i] instanceof Motherboard && ((Motherboard) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Motherboard) productsDataObject[i]).updateMotherboard(name, "Placa de baza", chipset, socket, memoryType, maxMemory, numberOfSlots, memoryFreq);
+                    if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        mysqlCon.updateProduct(name, chipset, socket, memoryType, maxMemory, numberOfSlots, memoryFreq, null, null, series, null, null, null, null, null, null, null, null, null);
                         JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                         errors = false;
                     }
-                }
                 if (errors) {
                     popUpInCaseOfError();
                 }
@@ -796,13 +700,11 @@ public class Homepage {
             if (name.equals("") || series.equals("") || capacity.equals("") || ssdType.equals("") || maxRead.equals("") || maxWrite.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
-                for (int i = 0; i < productsDataObject.length; i++) {
-                    if (productsDataObject[i] instanceof Ssd && ((Ssd) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Ssd) productsDataObject[i]).updateSsd(name, "Stocare SSD", series, capacity, ssdType, maxRead, maxWrite);
+                    if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        mysqlCon.updateProduct(name,null, null, null, null, null, null, null, null, series, null, null, null, capacity, ssdType, maxRead, maxWrite, null, null);
                         JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                         errors = false;
                     }
-                }
                 if (errors) {
                     popUpInCaseOfError();
                 }
@@ -811,13 +713,11 @@ public class Homepage {
             if (name.equals("") || power.equals("") || series.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
-                for (int i = 0; i < productsDataObject.length; i++) {
-                    if (productsDataObject[i] instanceof Psu && ((Psu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Psu) productsDataObject[i]).updatePsu(name, "Sursa", modulation, power);
+                    if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        mysqlCon.updateProduct(name, null, null, null, null, null, null, modulation, null, series, null, null, power, null, null, null, null, null, null);
                         JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                         errors = false;
                     }
-                }
                 if (errors) {
                     popUpInCaseOfError();
                 }
@@ -826,13 +726,11 @@ public class Homepage {
             if (name.equals("") || memoryType.equals("") || series.equals("") || freq.equals("") || capacity.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
-                for (int i = 0; i < productsDataObject.length; i++) {
-                    if (productsDataObject[i] instanceof Memory && ((Memory) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Memory) productsDataObject[i]).updateMemory(name, "Memorie RAM", memoryType, series, freq, capacity);
+                    if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        mysqlCon.updateProduct(name,null, null, memoryType, null, null, null, modulation, null, series, null, null, null, capacity, null, null, null, null, null);
                         JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                         errors = false;
                     }
-                }
                 if (errors) {
                     popUpInCaseOfError();
                 }
@@ -841,13 +739,11 @@ public class Homepage {
             if (name.equals("") || chipset.equals("") || memoryType.equals("") || memoryEffectiveFreq.equals("") || series.equals("") || power.equals("") || memorySize.equals("") || coolingSystem.equals("")){
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
-                for (int i = 0; i < productsDataObject.length; i++) {
-                    if (productsDataObject[i] instanceof Gpu && ((Gpu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Gpu) productsDataObject[i]).updateGpu(name, "Placa video", chipset, memoryType, memoryEffectiveFreq, series, power, memorySize, coolingSystem);
+                    if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                        mysqlCon.updateProduct(name, chipset, null, memoryType, null, null, null, null, null, series, null, null, power, null, null, null, null, memorySize, coolingSystem);
                         JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
                         errors = false;
                     }
-                }
                 if (errors) {
                     popUpInCaseOfError();
                 }
@@ -884,79 +780,26 @@ public class Homepage {
         String maxWrite = maxWriteField.getText();
         String memorySize = memorySizeField.getText();
         String coolingSystem = coolingSystemComboBox.getSelectedItem().toString();
+        seriesField.setEnabled(false);
 
         if (componentType.equals("Procesor")){
-            Processor processor = new Processor(name, componentType, chipset, socket, memoryType, maxMemory, memoryFreq, series, numberOfCores, freq, power);
-            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
-            productsDataObject[productsDataObject.length - 1] = processor;
+            mysqlCon.addProduct(name, "Procesor", chipset, socket, memoryType, maxMemory, null, memoryFreq, null, null, series, numberOfCores, freq, power, null, null, null, null, null, null);
         }else if (componentType.equals("Placa de baza")){
-            Motherboard motherboard = new Motherboard(name, componentType, chipset, socket, memoryType, maxMemory, numberOfSlots, memoryFreq);
-            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
-            productsDataObject[productsDataObject.length - 1] = motherboard;
+            mysqlCon.addProduct(name, "Placa de baza", chipset, socket, memoryType, maxMemory, numberOfSlots, memoryFreq, null, null, series, null, null, null, null, null, null, null, null, null);
         }else if (componentType.equals("Stocare SSD")) {
-            Ssd ssd = new Ssd(name, componentType, series, capacity, ssdType, maxRead, maxWrite);
-            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
-            productsDataObject[productsDataObject.length - 1] = ssd;
+            mysqlCon.addProduct(name, "Stocare SSD", null, null, null, null, null, null, null, null, series, null, null, null, capacity, ssdType, maxRead, maxWrite, null, null);
         }else if (componentType.equals("Sursa")) {
-            Psu psu = new Psu(name, componentType, modulation, power);
-            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
-            productsDataObject[productsDataObject.length - 1] = psu;
+            mysqlCon.addProduct(name, "Sursa", null, null, null, null, null, null, modulation, null, series, null, null, power, null, null, null, null, null, null);
         } else if (componentType.equals("Memorie RAM")) {
-            Memory memory = new Memory(name, componentType, memoryType, series, freq, capacity);
-            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
-            productsDataObject[productsDataObject.length - 1] = memory;
+            mysqlCon.addProduct(name, "Memorie RAM", null, null, memoryType, null, null, null, modulation, null, series, null, null, null, capacity, null, null, null, null, null);
         } else if (componentType.equals("Placa video")) {
-            Gpu gpu = new Gpu(name, componentType, chipset, memoryType, memoryEffectiveFreq, series, power, memorySize, coolingSystem);
-            productsDataObject = Arrays.copyOf(productsDataObject, productsDataObject.length + 1);
-            productsDataObject[productsDataObject.length - 1] = gpu;
+            mysqlCon.addProduct(name, "Placa video", chipset, null, memoryType, null, null, null, null, null, series, null, null, power, null, null, null, null, memorySize, coolingSystem);
         }
     }
 
     private void removeProduct(){
-        int selectedRow = dataTable.getSelectedRow();
-        if (selectedRow == -1){
-            JOptionPane.showMessageDialog(null, "Nu ati selectat niciun produs!");
-        } else {
-            for (int i = 0; i < productsDataObject.length; i++) {
-                if (productsDataObject[i] instanceof Processor && ((Processor) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    productsDataObject[i] = null;
-                    productsDataObject = Arrays.stream(productsDataObject)
-                            .filter(Objects::nonNull)
-                            .toArray();
-                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
-                } else if (productsDataObject[i] instanceof Motherboard && ((Motherboard) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    productsDataObject[i] = null;
-                    productsDataObject = Arrays.stream(productsDataObject)
-                            .filter(Objects::nonNull)
-                            .toArray();
-                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
-                } else if (productsDataObject[i] instanceof Ssd && ((Ssd) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    productsDataObject[i] = null;
-                    productsDataObject = Arrays.stream(productsDataObject)
-                            .filter(Objects::nonNull)
-                            .toArray();
-                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
-                } else if (productsDataObject[i] instanceof Psu && ((Psu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    productsDataObject[i] = null;
-                    productsDataObject = Arrays.stream(productsDataObject)
-                            .filter(Objects::nonNull)
-                            .toArray();
-                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
-                } else if (productsDataObject[i] instanceof Memory && ((Memory) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    productsDataObject[i] = null;
-                    productsDataObject = Arrays.stream(productsDataObject)
-                            .filter(Objects::nonNull)
-                            .toArray();
-                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
-                } else if (productsDataObject[i] instanceof Gpu && ((Gpu) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                    productsDataObject[i] = null;
-                    productsDataObject = Arrays.stream(productsDataObject)
-                            .filter(Objects::nonNull)
-                            .toArray();
-                    JOptionPane.showMessageDialog(null, "Produsul a fost sters cu succes!");
-                }
-            }
-        }
+        String getSeries = dataTable.getValueAt(dataTable.getSelectedRow(), 10).toString();
+        mysqlCon.deleteProduct(getSeries);
         addDataToDataObject();
     }
 

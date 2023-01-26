@@ -157,15 +157,39 @@ class MysqlCon{
             JOptionPane.showMessageDialog(null ,"Eroare la conectarea la baza de date");
         }
         ArrayList<Object> list = new ArrayList<>(Arrays.asList(productsData));
-        list.removeIf(Objects::isNull);
         return list.toArray(new Object[list.size()]);
     }
-    public void updateProduct(String name, String componentType, String chipset, String socket, String memoryType, String memoryMax, String memorySlots, String memoryFrequency, String modulation, String memoryFrequencyEffective, String series, String numberOfCores, String freq, String power, String capacity, String ssdType, String readMax, String writeMax, String memorySize, String coolingSystem){
+    public void updateProduct(String name, String chipset, String socket, String memoryType, String memoryMax, String memorySlots, String memoryFrequency, String modulation, String memoryFrequencyEffective, String series, String numberOfCores, String freq, String power, String capacity, String ssdType, String readMax, String writeMax, String memorySize, String coolingSystem){
         try{
             Connection con=DriverManager.getConnection(
                     dotenv.get("DATABASE_URL"), dotenv.get("DATABASE_LOGIN"),dotenv.get("DATABASE_PASSWORD"));
             Statement stmt=con.createStatement();
             stmt.executeUpdate("update produs set denumire = '" + name + "', chipset = '" + chipset + "', socket = '" + socket + "', tip_memorie = '" + memoryType + "', memorie_maxima = '" + memoryMax + "', numar_sloturi = '" + memorySlots + "', frecventa_memorie = '" + memoryFrequency + "', modulara = '" + modulation + "', frecventa_memorie_efectiva = '" + memoryFrequencyEffective + "', numar_nuclee = '" + numberOfCores + "', frecventa = '" + freq + "', putere = '" + power + "', capacitate = '" + capacity + "', tip_ssd = '" + ssdType + "', citire_maxima = '" + readMax + "', scriere_maxima = '" + writeMax + "', dimensiune_memorie = '" + memorySize + "', sistem_racire = '" + coolingSystem + "' where serie = '" + series + "'");
+            con.close();
+        }catch(Exception e){
+            System.out.println(e);
+            JOptionPane.showMessageDialog(null ,"Eroare la conectarea la baza de date");
+        }
+    }
+    public void addProduct(String name, String componentType, String chipset, String socket, String memoryType, String memoryMax, String memorySlots, String memoryFrequency, String modulation, String memoryFrequencyEffective, String series, String numberOfCores, String freq, String power, String capacity, String ssdType, String readMax, String writeMax, String memorySize, String coolingSystem){
+        try{
+            Connection con=DriverManager.getConnection(
+                    dotenv.get("DATABASE_URL"), dotenv.get("DATABASE_LOGIN"),dotenv.get("DATABASE_PASSWORD"));
+            Statement stmt=con.createStatement();
+            stmt.executeUpdate( "insert into produs (denumire, tip_componenta, chipset, socket, tip_memorie, memorie_maxima, numar_sloturi, frecventa_memorie, modulara, frecventa_memorie_efectiva, serie, numar_nuclee, frecventa, putere, capacitate, tip_ssd, citire_maxima, scriere_maxima, dimensiune_memorie, sistem_racire) values ('" + name + "', '" + componentType + "', '" + chipset + "', '" + socket + "', '" + memoryType + "', '" + memoryMax + "', '" + memorySlots + "', '" + memoryFrequency + "', '" + modulation + "', '" + memoryFrequencyEffective + "', '" + series + "', '" + numberOfCores + "', '" + freq + "', '" + power + "', '" + capacity + "', '" + ssdType + "', '" + readMax + "', '" + writeMax + "', '" + memorySize + "', '" + coolingSystem + "')" );
+            con.close();
+        }catch(Exception e){
+            System.out.println(e);
+            JOptionPane.showMessageDialog(null ,"Eroare la conectarea la baza de date");
+        }
+    }
+
+    public void deleteProduct(String series){
+        try{
+            Connection con=DriverManager.getConnection(
+                    dotenv.get("DATABASE_URL"), dotenv.get("DATABASE_LOGIN"),dotenv.get("DATABASE_PASSWORD"));
+            Statement stmt=con.createStatement();
+            stmt.executeUpdate("delete from produs where serie = '" + series + "'");
             con.close();
         }catch(Exception e){
             System.out.println(e);
