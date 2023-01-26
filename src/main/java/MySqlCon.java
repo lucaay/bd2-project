@@ -13,7 +13,7 @@ class MysqlCon{
 
     Dotenv dotenv = null;
 
-    String currentLoggedInAccountType = null;
+    int currentLoggedInAccountType = 0;
 
     public MysqlCon(){
         dotenv = Dotenv.configure().load();
@@ -26,7 +26,7 @@ class MysqlCon{
             Statement stmt=con.createStatement();
             ResultSet rs=stmt.executeQuery("select * from utilizator where email = '" + email + "' and parola = '" + password + "'");
             if(rs.next()){
-                currentLoggedInAccountType = rs.getInt(10) == 0 ? "Client" : "Administrator";
+                currentLoggedInAccountType = rs.getInt(10);
                 return true;
             }
             con.close();
@@ -144,11 +144,9 @@ class MysqlCon{
             Statement stmt=con.createStatement();
             ResultSet rs=stmt.executeQuery("select * from produs");
             int i = 0;
-            int numberOfProducts = 0;
             while(rs.next()){
-                numberOfProducts++;
-                String[] product = new String[numberOfProducts];
-                for (int j = 0; j < numberOfProducts; j++) {
+                String[] product = new String[20];
+                for (int j = 0; j < product.length; j++) {
                     product[j] = rs.getString(j+1);
                 }
                 productsData[i++] = product;
@@ -160,10 +158,14 @@ class MysqlCon{
         }
         ArrayList<Object> list = new ArrayList<>(Arrays.asList(productsData));
         list.removeIf(Objects::isNull);
+//        for (int i = 0; i < list.size(); i++) {
+//            ArrayList<Object> tempList = new ArrayList<>(Arrays.asList((Object[]) list.get(i)));
+//            System.out.println(tempList.get(0));
+//        }
         return list.toArray(new Object[list.size()]);
     }
 
-    public String getCurrentLoggedInAccountType(){
+    public int getCurrentLoggedInAccountType(){
         return currentLoggedInAccountType;
     }
 

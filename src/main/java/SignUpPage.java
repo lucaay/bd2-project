@@ -1,14 +1,10 @@
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Scanner;
 
 public class SignUpPage {
     public JPanel signUpParentPanel;
@@ -102,23 +98,33 @@ public class SignUpPage {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (accountTypeComboBox.getSelectedItem().equals("Administrator") || firstNameField.getText().equals("") || lastNameField.getText().equals("") || emailField.getText().equals("") || passwordField.getText().equals("") || phoneField.getText().equals("") || accessCodeAdminField.getText().equals("")) {
-                    if (accessCodeAdminField.getText().equals(adminDefaultCode)) {
-                        mysqlCon.createAdminAccount(firstNameField.getText(), lastNameField.getText(), phoneField.getText(),
-                                emailField.getText(), passwordField.getText(), accountTypeComboBox.getSelectedItem().toString());
-                        JOptionPane.showMessageDialog(null, "Contul a fost creat cu succes!");
+                if (accountTypeComboBox.getSelectedItem().equals("Administrator")) {
+                    if (firstNameField.getText().equals("") || lastNameField.getText().equals("") || emailField.getText().equals("") || passwordField.getText().equals("") || phoneField.getText().equals("") || accessCodeAdminField.getText().equals("")) {
+                        JOptionPane.showMessageDialog(null, "Va rugam sa completati toate campurile!");
                     } else {
-                        JOptionPane.showMessageDialog(null, "Codul de acces este incorect!");
+                        if (accessCodeAdminField.getText().equals(adminDefaultCode)) {
+                            mysqlCon.createAdminAccount(firstNameField.getText(), lastNameField.getText(), phoneField.getText(),
+                                    emailField.getText(), passwordField.getText(), accountTypeComboBox.getSelectedItem().toString());
+                            JOptionPane.showMessageDialog(null, "Contul a fost creat cu succes!");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Codul de acces este incorect!");
+                        }
                     }
-                }else if (accountTypeComboBox.getSelectedItem().equals("Client") || firstNameField.getText().equals("") || lastNameField.getText().equals("") || emailField.getText().equals("") || passwordField.getText().equals("") || phoneField.getText().equals("") || stateComboBox.getSelectedItem().equals("Selecteaza judetul") || cityComboBox.getSelectedItem().equals("Selecteaza localitatea") || addressField.getText().equals("")) {
-                    mysqlCon.createClientAccount(firstNameField.getText(), lastNameField.getText(),
-                            phoneField.getText(), stateComboBox.getSelectedItem().toString(),
-                            cityComboBox.getSelectedItem().toString(), addressField.getText(), emailField.getText(), passwordField.getText(),
-                            accountTypeComboBox.getSelectedItem().toString());
-                    JOptionPane.showMessageDialog(null, "Contul a fost creat cu succes!");
-                }else{
-                    JOptionPane.showMessageDialog(null, "Va rugam sa completati toate campurile!");
+                } else if (accountTypeComboBox.getSelectedItem().equals("Client")) {
+                    if (firstNameField.getText().equals("") || lastNameField.getText().equals("") || emailField.getText().equals("") || passwordField.getText().equals("") || phoneField.getText().equals("") || stateComboBox.getSelectedItem().equals("Selecteaza judetul") || cityComboBox.getSelectedItem().equals("Selecteaza localitatea") || addressField.getText().equals("")) {
+                        JOptionPane.showMessageDialog(null, "Va rugam sa completati toate campurile!");
+                    } else {
+                        mysqlCon.createClientAccount(firstNameField.getText(), lastNameField.getText(),
+                                phoneField.getText(), stateComboBox.getSelectedItem().toString(),
+                                cityComboBox.getSelectedItem().toString(), addressField.getText(), emailField.getText(), passwordField.getText(),
+                                accountTypeComboBox.getSelectedItem().toString());
+                        JOptionPane.showMessageDialog(null, "Contul a fost creat cu succes!");
+
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Va rugam sa selectati tipul de cont!");
                 }
+
             }
         });
         accountTypeComboBox.addActionListener(new ActionListener() {
@@ -132,12 +138,14 @@ public class SignUpPage {
                     cityComboBox.setVisible(false);
                     addressLabel.setVisible(false);
                     addressField.setVisible(false);
+                    accessCodeAdminField.setEnabled(true);
                 }else if (accountTypeComboBox.getSelectedItem().equals("Client")) {
                     setAllItemsVisible();
                     accessCodeAdminLabel.setVisible(false);
                     accessCodeAdminField.setVisible(false);
                     cityLabel.setVisible(false);
                     cityComboBox.setVisible(false);
+                    accessCodeAdminField.setEnabled(false);
                 } else {
                     setAllItemsInvisible();
                     accountTypeLabel.setVisible(true);

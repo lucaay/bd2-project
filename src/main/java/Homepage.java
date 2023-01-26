@@ -101,7 +101,8 @@ public class Homepage {
         hideAllProperties();
         createButtonGroups();
         addHeadersToDataTableAndCartTable();
-        if (mysqlCon.currentLoggedInAccountType != null && mysqlCon.currentLoggedInAccountType.equals("Client")) {
+        int isLogged = mysqlCon.currentLoggedInAccountType;
+        if (isLogged == 0) {
             addButton.setVisible(false);
             deleteButton.setVisible(false);
             modifyButton.setVisible(false);
@@ -516,9 +517,12 @@ public class Homepage {
         productsDataObject = mysqlCon.retrieveProducts();
         productsRawDataObject = new Object[productsDataObject.length][];
         for (int i = 0; i < productsDataObject.length; i++) {
-            System.out.println(productsDataObject[i].toString());
-//            productsRawDataObject[i] = (Object[]) productsDataObject[i];
-
+            ArrayList<Object> tempList = new ArrayList<>(Arrays.asList((Object[]) productsDataObject[i]));
+            tempList.removeIf(Objects::isNull); // remove null values from array
+            productsRawDataObject[i] = tempList.toArray();
+        }
+        for (int i = 0; i < productsRawDataObject.length; i++) {
+            System.out.println(Arrays.toString(productsRawDataObject[i]));
         }
     }
 
