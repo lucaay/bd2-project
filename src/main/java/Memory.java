@@ -1,4 +1,4 @@
-public class Memory {
+public class Memory extends Object{
     private String name;
     private String componentType;
     private String memoryType;
@@ -15,7 +15,7 @@ public class Memory {
         this.capacity = capacity;
     }
 
-    public Object[] memoryObject(){
+    public Object[] getObject(){
         return new Object[]{name, componentType, memoryType, series, freq, capacity};
     }
 

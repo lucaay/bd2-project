@@ -23,7 +23,7 @@ public class Processor {
         this.freq = freq;
         this.power = power;
     }
-    public Object[] processorObject(){
+    public Object[] getObject(){
         return new Object[]{name, componentType, chipset, socket, memoryType, maxMemory, memoryFreq, series, numberOfCores, freq, power};
     }
 

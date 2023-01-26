@@ -1,11 +1,11 @@
 public class Receipt {
-private String id;
+private int id;
+    private int clientID;
     private String date;
-    private String clientID;
-    private String total;
+    private int total;
     private String products;
 
-    public Receipt(String id, String date, String clientID, String total, String products) {
+    public Receipt(int id, int clientID,String date, int total, String products) {
         this.id = id;
         this.clientID = clientID;
         this.date = date;
@@ -14,14 +14,14 @@ private String id;
     }
 
     public Object[] receiptObject(){
-        return new Object[]{id, date, clientID, total, products};
+        return new Object[]{id,clientID, date, total, products};
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -33,19 +33,19 @@ private String id;
         this.date = date;
     }
 
-    public String getClientID() {
+    public int getClientID() {
         return clientID;
     }
 
-    public void setClientID(String clientID) {
+    public void setClientID(int clientID) {
         this.clientID = clientID;
     }
 
-    public String getTotal() {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 
@@ -57,13 +57,6 @@ private String id;
         this.products = products;
     }
 
-    public void updateReceipt(String id, String date, String clientID, String total, String products){
-        setId(id);
-        setDate(date);
-        setClientID(clientID);
-        setTotal(total);
-        setProducts(products);
-    }
 
 
 }

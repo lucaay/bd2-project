@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
@@ -84,29 +85,9 @@ public class Homepage {
     DefaultTableModel dataTableModel = (DefaultTableModel) dataTable.getModel();
     DefaultTableModel cartTableModel = (DefaultTableModel) cartTable.getModel();
 
-    Processor processor = new Processor("Ryzen 5 3600", "Procesor", "AMD", "642", "DDR2", "64", "3900", "32323YT5", "32", "4500", "50");
-    Processor processor1 = new Processor("Ryzen 7 3700X", "Procesor", "INTEL", "643", "DDR3", "64", "3900", "32323YT6", "32", "4500", "50");
-    Processor processor2 = new Processor("Ryzen 9 3900X", "Procesor", "AMD", "644", "DDR4", "64", "3900", "32323YT7", "32", "4500", "50");
-    Memory memory = new Memory("Corsair Vengeance LPX", "Memorie RAM", "DDR4", "64daw8dty", "3900", "8");
-    Memory memory1 = new Memory("Kingston", "Memorie RAM", "DDR3", "63daw8dty", "3200", "16");
-    Memory memory2 = new Memory("HyperX", "Memorie RAM", "DDR2", "62daw8dty", "4500", "32");
-    Motherboard motherboard = new Motherboard("AS-Rock", "Placa de baza", "AMD", "644", "DDR4", "128", "2", "4200");
-    Ssd ssd = new Ssd("WD-blue", "Stocare SSD", "56Y9DAWVB", "512", "M.2", "1500", "600");
-    Psu psu = new Psu("MYRIA", "Sursa", "Da", "580");
-    Gpu gpu = new Gpu("NVIDIA", "Placa video", "NVIDIA", "DDR6", "12500", "6dahjwgdjua","780","12", "Activ");
+    MysqlCon mysqlCon = new MysqlCon();
 
-    Object[] productsDataObject = {
-            processor,
-            processor1,
-            processor2,
-            memory,
-            memory1,
-            memory2,
-            motherboard,
-            ssd,
-            psu,
-            gpu,
-    };
+    Object[] productsDataObject = mysqlCon.retrieveProducts();
     Object[][] productsRawDataObject;
     Object[] cartDataObject = {};
     Object[][] cartRawDataObject;
@@ -120,11 +101,25 @@ public class Homepage {
         hideAllProperties();
         createButtonGroups();
         addHeadersToDataTableAndCartTable();
-        addButton.setEnabled(true);
+        if (mysqlCon.currentLoggedInAccountType != null && mysqlCon.currentLoggedInAccountType.equals("Client")) {
+            addButton.setVisible(false);
+            deleteButton.setVisible(false);
+            modifyButton.setVisible(false);
+            saveButton.setVisible(false);
+            viewClientsButton.setVisible(false);
+        } else {
+            addButton.setEnabled(true);
+        }
         backToLoginPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 applicationInterface.showLogInPage();
+                addButton.setVisible(true);
+                deleteButton.setVisible(true);
+                modifyButton.setVisible(true);
+                saveButton.setVisible(true);
+                viewClientsButton.setVisible(true);
+                addButton.setEnabled(false);
             }
         });
         addButton.addActionListener(new ActionListener() {
@@ -518,21 +513,12 @@ public class Homepage {
     }
 
     private void createRowDataObject() {
+        productsDataObject = mysqlCon.retrieveProducts();
         productsRawDataObject = new Object[productsDataObject.length][];
         for (int i = 0; i < productsDataObject.length; i++) {
-            if (productsDataObject[i] instanceof Processor){
-                productsRawDataObject[i] = ((Processor) productsDataObject[i]).processorObject();
-            }else if (productsDataObject[i] instanceof Memory){
-                productsRawDataObject[i] = ((Memory) productsDataObject[i]).memoryObject();
-            }else if (productsDataObject[i] instanceof Motherboard){
-                productsRawDataObject[i] = ((Motherboard) productsDataObject[i]).motherboardObject();
-            }else if (productsDataObject[i] instanceof Ssd){
-                productsRawDataObject[i] = ((Ssd) productsDataObject[i]).ssdObject();
-            } else if (productsDataObject[i] instanceof Psu){
-                productsRawDataObject[i] = ((Psu) productsDataObject[i]).psuObject();
-            } else if (productsDataObject[i] instanceof Gpu){
-                productsRawDataObject[i] = ((Gpu) productsDataObject[i]).gpuObject();
-            }
+            System.out.println(productsDataObject[i].toString());
+//            productsRawDataObject[i] = (Object[]) productsDataObject[i];
+
         }
     }
 
@@ -548,29 +534,43 @@ public class Homepage {
             Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
                 @Override
                 public int compare(Object[] o1, Object[] o2) {
-                    return ((String) o1[0]).compareToIgnoreCase((String) o2[0]);
+                    if (o1 != null && o2 != null){
+                        return o1[0].toString().compareTo(o2[0].toString());
+                    }else{
+                        return 0;
+                    }
                 }
             });
         } else if (componentTypeOrderRadioButton.isSelected()){
             Arrays.sort(tempRowDataObject, new Comparator<Object[]>() {
                 @Override
                 public int compare(Object[] o1, Object[] o2) {
-                    return ((String) o1[1]).compareToIgnoreCase((String) o2[1]);
+                    if (o1 != null && o2 != null){
+                        return o1[0].toString().compareTo(o2[0].toString());
+                    }else{
+                        return 0;
+                    }
                 }
             });
         }
 
         for (int i = 0; i < tempRowDataObject.length; i++){
             if (containsRadioButton.isSelected() && !findByWordField.equals("")){
+                    if (tempRowDataObject[i] != null){
                 if (tempRowDataObject[i][0].toString().toLowerCase().contains(findByWordField.getText().toLowerCase())){
-                    addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
+                        addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
                 }
+                    }
             } else if (startsWithRadioButton.isSelected() && !findByWordField.equals("")){
+                    if (tempRowDataObject[i] != null){
                 if (tempRowDataObject[i][0].toString().toLowerCase().startsWith(findByWordField.getText())){
+                        addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
+                }
+                    }
+            } else{
+                if (tempRowDataObject[i] != null) {
                     addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
                 }
-            } else{
-                addDataAtSpecificIndex(i, tempRowDataObject, dataTableModel);
             }
         }
         numberOfProductsLabel.setText(dataTableModel.getRowCount() + " produse");
@@ -650,7 +650,11 @@ public class Homepage {
         Arrays.sort(productsRawDataObject, new Comparator<Object[]>() {
             @Override
             public int compare(Object[] o1, Object[] o2) {
-                return o1[0].toString().compareTo(o2[0].toString());
+                if (o1 != null && o2 != null){
+                    return o1[0].toString().compareTo(o2[0].toString());
+                }else{
+                    return 0;
+                }
             }
         });
     }

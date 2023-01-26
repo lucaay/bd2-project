@@ -20,7 +20,7 @@ public class Motherboard {
         this.memoryFreq = memoryFreq;
     }
 
-    public Object[] motherboardObject(){
+    public Object[] getObject(){
         return new Object[]{name, componentType, chipset, socket, memoryType, maxMemory, memorySlots, memoryFreq};
     }
 

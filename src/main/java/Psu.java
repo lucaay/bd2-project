@@ -12,7 +12,7 @@ public class Psu {
         this.power = power;
     }
 
-    public Object[] psuObject(){
+    public Object[] getObject(){
         return new Object[]{name, componentType, modularity, power};
     }
 

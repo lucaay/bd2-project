@@ -79,23 +79,13 @@ public class ClientsAndReceiptsPage {
     ButtonGroup tableTypeReceiptsButtonGroup = new ButtonGroup();
     ButtonGroup filterTypeReceiptsButtonGroup = new ButtonGroup();
     ButtonGroup orderTypeReceiptsButtonGroup = new ButtonGroup();
-    Client client1 = new Client("1", "Ion", "Popescu", "test@email.com", "0722222222", "București", "Sector 2", "Str. Test 1");
-    Client client2 = new Client("2", "Gion", "aLECU", "test2@email.com", "0722234222", "Galați", "Barcea", "Str. Test 2");
-    Client client3 = new Client("3", "alex", "munteanu", "test3@email.com", "07222223232", "Brașov", "Bod", "Str. Test 3");
-    Client[] clientsDataObject = {
-            client1,
-            client2,
-            client3,
-    };
+
+    MysqlCon mysqlCon = new MysqlCon();
+
+
+    Client[] clientsDataObject = mysqlCon.retrieveClients();
     Object[][] clientsRowDataObject;
-    Receipt receipt1 = new Receipt("121", "256", "2020-01-01", "100", "PLACA DE BAZA, PROCESOR, RAM");
-    Receipt receipt2 = new Receipt("256", "354", "2020-01-02", "200", "PLACA DE BAZA, PROCESOR, RAM, HDD");
-    Receipt receipt3 = new Receipt("334", "359", "2020-01-05", "300", "PLACA DE BAZA, PROCESOR, RAM, HDD, SSD");
-    Receipt[] receiptsDataObject = {
-            receipt1,
-            receipt2,
-            receipt3,
-    };
+    Receipt[] receiptsDataObject = mysqlCon.retrieveReceipts();
     Object[][] receiptsRowDataObject;
     private boolean errors = false;
 
@@ -108,6 +98,7 @@ public class ClientsAndReceiptsPage {
         addHeadersToClientTable();
         addHeadersToReceiptTable();
         setComboBoxesData();
+
 
         allDataCheckBox.addActionListener(new ActionListener() {
             @Override
@@ -303,6 +294,7 @@ public class ClientsAndReceiptsPage {
     }
 
     private void createClientsRowDataObject() {
+        clientsDataObject = mysqlCon.retrieveClients();
         clientsRowDataObject = new Object[clientsDataObject.length][];
         for (int i = 0; i < clientsDataObject.length; i++) {
             clientsRowDataObject[i] = clientsDataObject[i].clientObject();
@@ -310,6 +302,7 @@ public class ClientsAndReceiptsPage {
     }
 
     private void createReceiptsRowDataObject() {
+        receiptsDataObject = mysqlCon.retrieveReceipts();
         receiptsRowDataObject = new Object[receiptsDataObject.length][];
         for (int i = 0; i < receiptsDataObject.length; i++) {
             receiptsRowDataObject[i] = receiptsDataObject[i].receiptObject();
@@ -469,14 +462,20 @@ public class ClientsAndReceiptsPage {
         for (int i = 0; i < tempRowDataObject.length; i++){
             if (containsClientsRadioButton.isSelected() && !findByWordClientsField.equals("")){
                 if (tempRowDataObject[i][1].toString().toLowerCase().contains(findByWordClientsField.getText().toLowerCase()) || tempRowDataObject[i][2].toString().toLowerCase().contains(findByWordClientsField.getText().toLowerCase())){
-                    clientTableModel.addRow(tempRowDataObject[i]);
+                    if (tempRowDataObject[i] != null){
+                        clientTableModel.addRow(tempRowDataObject[i]);
+                    }
                 }
             } else if (startsWithClientsRadioButton.isSelected() && !findByWordClientsField.equals("")){
                 if (tempRowDataObject[i][1].toString().toLowerCase().startsWith(findByWordClientsField.getText()) || tempRowDataObject[i][2].toString().toLowerCase().startsWith(findByWordClientsField.getText().toLowerCase())){
-                    clientTableModel.addRow(tempRowDataObject[i]);
+                    if (tempRowDataObject[i] != null){
+                        clientTableModel.addRow(tempRowDataObject[i]);
+                    }
                 }
             } else{
-                clientTableModel.addRow(tempRowDataObject[i]);
+                if (tempRowDataObject[i] != null){
+                        clientTableModel.addRow(tempRowDataObject[i]);
+                    }
             }
         }
         numberOfClientsLabel.setText(clientTableModel.getRowCount() + " clienti");
@@ -522,7 +521,11 @@ public class ClientsAndReceiptsPage {
         Arrays.sort(clientsRowDataObject, new Comparator<Object[]>() {
             @Override
             public int compare(Object[] o1, Object[] o2) {
-                return Integer.compare(Integer.parseInt(o1[0].toString()), Integer.parseInt(o2[0].toString()));
+                if (o1 != null && o2 != null){
+                    return Integer.compare((Integer) o1[0], (Integer) o2[0]);
+                }else{
+                    return 0;
+                }
             }
         });
     }
@@ -530,7 +533,11 @@ public class ClientsAndReceiptsPage {
         Arrays.sort(receiptsRowDataObject, new Comparator<Object[]>() {
             @Override
             public int compare(Object[] o1, Object[] o2) {
-                return Integer.compare(Integer.parseInt(o1[0].toString()), Integer.parseInt(o2[0].toString()));
+                if (o1 != null && o2 != null){
+                    return Integer.compare((Integer) o1[0], (Integer) o2[0]);
+                }else{
+                    return 0;
+                }
             }
         });
     }
@@ -649,7 +656,7 @@ public class ClientsAndReceiptsPage {
     }
 
     private void saveClientChanges() {
-        String id = idField.getText();
+        int id = Integer.parseInt(idField.getText());
         String name = nameField.getText();
         String lastName = lastNameField.getText();
         String email = emailField.getText();
@@ -658,7 +665,7 @@ public class ClientsAndReceiptsPage {
         String city = cityComboBox.getSelectedItem().toString();
         String address = addressField.getText();
         errors = true;
-        if (id.equals("") || name.equals("") || lastName.equals("") || email.equals("") || phone.equals("") || state.equals("") || city.equals("") || address.equals("")) {
+        if (name.equals("") || lastName.equals("") || email.equals("") || phone.equals("") || state.equals("") || city.equals("") || address.equals("")) {
             JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
         } else if (!email.contains("@") && !email.contains(".")) {
             JOptionPane.showMessageDialog(null, "Adresa de email nu este valida!");
@@ -668,42 +675,30 @@ public class ClientsAndReceiptsPage {
             errors = false;
         }
         if (!errors) {
-            for (int i = 0; i < clientsDataObject.length; i++) {
-                if (clientsDataObject[i].getId().equals(id)) {
-                    clientsDataObject[i].updateClient(id, name, lastName, email, phone, state, city, address);
-                    JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
-                    errors = false;
-                }
-            }
+            mysqlCon.updateClient(id, name, lastName, email, phone, state, city, address);
+            JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+            errors = false;
         }
     }
 
     private void saveReceiptChanges() {
-        String id = idField.getText();
-        String clientId = clientIdField.getText();
+        int id = Integer.parseInt(idField.getText());
+        int clientId = Integer.parseInt(clientIdField.getText());
         String receiptDate = receiptDateField.getText();
-        String totalPrice = totalPriceField.getText();
+        int totalPrice = Integer.parseInt(totalPriceField.getText());
         String receiptProducts = receiptProductsTextArea.getText();
         errors = true;
-        if (id.equals("") || clientId.equals("") || receiptDate.equals("") || totalPrice.equals("") || receiptProducts.equals("")) {
+        if (receiptDate.equals("")|| receiptProducts.equals("")) {
             JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
         } else {
-            for (int i = 0; i < receiptsDataObject.length; i++) {
-                if (receiptsDataObject[i].getId().equals(id)) {
-                    receiptsDataObject[i].updateReceipt(id, clientId, receiptDate, totalPrice, receiptProducts);
-                    JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
-                    errors = false;
-                }
-            }
-            if (errors) {
-                JOptionPane.showMessageDialog(null, "A aparut o eroare!");
-                saveReceiptButton.setEnabled(false);
-                modifyReceiptButton.setEnabled(false);
-                allDataCheckBox.setEnabled(false);
-                receiptTableModel.setRowCount(0);
-            }
+            errors = false;
         }
-        errors = true;
+
+        if (!errors) {
+            mysqlCon.updateReceipt(id, clientId, receiptDate, totalPrice, receiptProducts);
+            JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+            errors = false;
+        }
     }
 
 }

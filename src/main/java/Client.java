@@ -1,5 +1,5 @@
 public class Client {
-    private String id;
+    private int id;
     private String name;
     private String lastName;
     private String email;
@@ -8,7 +8,9 @@ public class Client {
     private String city;
     private String address;
 
-    public Client(String id, String name, String lastName, String email, String phoneNumber, String state, String city, String address) {
+    MysqlCon mysqlCon = new MysqlCon();
+
+    public Client(int id, String name, String lastName, String email, String phoneNumber, String state, String city, String address) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
@@ -23,11 +25,11 @@ public class Client {
         return new Object[]{id, name, lastName, email, phoneNumber, state, city, address};
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -85,17 +87,6 @@ public class Client {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public void updateClient(String id, String name, String lastName, String email, String phoneNumber, String state, String city, String address) {
-        setId(id);
-        setName(name);
-        setLastName(lastName);
-        setEmail(email);
-        setPhoneNumber(phoneNumber);
-        setState(state);
-        setCity(city);
-        setAddress(address);
     }
 
 

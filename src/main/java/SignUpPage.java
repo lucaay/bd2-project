@@ -38,6 +38,9 @@ public class SignUpPage {
 
     LocationData locationData = new LocationData();
 
+    MysqlCon mysqlCon = new MysqlCon();
+    String adminDefaultCode = "1357";
+
 
     private void setAllItemsInvisible(){
         for (Component component : signUpPanel.getComponents()) {
@@ -99,7 +102,23 @@ public class SignUpPage {
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Sign up button clicked");
+                if (accountTypeComboBox.getSelectedItem().equals("Administrator") || firstNameField.getText().equals("") || lastNameField.getText().equals("") || emailField.getText().equals("") || passwordField.getText().equals("") || phoneField.getText().equals("") || accessCodeAdminField.getText().equals("")) {
+                    if (accessCodeAdminField.getText().equals(adminDefaultCode)) {
+                        mysqlCon.createAdminAccount(firstNameField.getText(), lastNameField.getText(), phoneField.getText(),
+                                emailField.getText(), passwordField.getText(), accountTypeComboBox.getSelectedItem().toString());
+                        JOptionPane.showMessageDialog(null, "Contul a fost creat cu succes!");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Codul de acces este incorect!");
+                    }
+                }else if (accountTypeComboBox.getSelectedItem().equals("Client") || firstNameField.getText().equals("") || lastNameField.getText().equals("") || emailField.getText().equals("") || passwordField.getText().equals("") || phoneField.getText().equals("") || stateComboBox.getSelectedItem().equals("Selecteaza judetul") || cityComboBox.getSelectedItem().equals("Selecteaza localitatea") || addressField.getText().equals("")) {
+                    mysqlCon.createClientAccount(firstNameField.getText(), lastNameField.getText(),
+                            phoneField.getText(), stateComboBox.getSelectedItem().toString(),
+                            cityComboBox.getSelectedItem().toString(), addressField.getText(), emailField.getText(), passwordField.getText(),
+                            accountTypeComboBox.getSelectedItem().toString());
+                    JOptionPane.showMessageDialog(null, "Contul a fost creat cu succes!");
+                }else{
+                    JOptionPane.showMessageDialog(null, "Va rugam sa completati toate campurile!");
+                }
             }
         });
         accountTypeComboBox.addActionListener(new ActionListener() {

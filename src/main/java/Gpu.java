@@ -21,7 +21,7 @@ public class Gpu {
         this.coolingSystem = coolingSystem;
     }
 
-    public Object[] gpuObject(){
+    public Object[] getObject(){
         return new Object[]{name, componentType, chipset, memoryType, memoryEffectiveFreq, series, power, memorySize, coolingSystem};
     }
 

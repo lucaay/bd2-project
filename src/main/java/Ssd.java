@@ -17,7 +17,7 @@ public class Ssd {
         this.maxWrite = maxWrite;
     }
 
-    public Object[] ssdObject(){
+    public Object[] getObject(){
         return new Object[]{name, componentType, series, capacity, ssdType, maxRead, maxWrite};
     }
 
