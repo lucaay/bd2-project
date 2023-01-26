@@ -360,6 +360,8 @@ public class Homepage {
                 numberOfSlotsField.setVisible(true);
                 memoryFreqLabel.setVisible(true);
                 memoryFreqField.setVisible(true);
+                seriesLabel.setVisible(true);
+                seriesField.setVisible(true);
                 break;
             case "Memorie RAM":
                 seriesLabel.setVisible(true);
@@ -425,6 +427,8 @@ public class Homepage {
                 modulationCheckBox.setVisible(true);
                 powerLabel.setVisible(true);
                 powerField.setVisible(true);
+                seriesLabel.setVisible(true);
+                seriesField.setVisible(true);
 
                 break;
             default:
@@ -473,7 +477,7 @@ public class Homepage {
         maxMemoryField.setEnabled(true);
         numberOfSlotsField.setEnabled(true);
         memoryFreqField.setEnabled(true);
-        seriesField.setEnabled(true);
+        seriesField.setEnabled(false);
         memoryEffectiveFreqField.setEnabled(true);
     }
 
@@ -520,9 +524,6 @@ public class Homepage {
             ArrayList<Object> tempList = new ArrayList<>(Arrays.asList((Object[]) productsDataObject[i]));
             tempList.removeIf(Objects::isNull); // remove null values from array
             productsRawDataObject[i] = tempList.toArray();
-        }
-        for (int i = 0; i < productsRawDataObject.length; i++) {
-            System.out.println(Arrays.toString(productsRawDataObject[i]));
         }
     }
 
@@ -615,6 +616,7 @@ public class Homepage {
                 tableModel.setValueAt(dataObject[i][5].toString(), row, 5); //max memory
                 tableModel.setValueAt(dataObject[i][6].toString(), row, 6); //memory slots
                 tableModel.setValueAt(dataObject[i][7].toString(), row, 7); //memory freq
+                tableModel.setValueAt(dataObject[i][8].toString(), row, 10); // series
 
 
             } else if (dataObject[i][1].toString().equals("Stocare SSD")) {
@@ -634,7 +636,8 @@ public class Homepage {
                 tableModel.setValueAt(dataObject[i][0].toString(), row, 0); //name
                 tableModel.setValueAt(dataObject[i][1].toString(), row, 1); //component type
                 tableModel.setValueAt(dataObject[i][2].toString(), row, 8); //modularity
-                tableModel.setValueAt(dataObject[i][3].toString(), row, 13); // power
+                tableModel.setValueAt(dataObject[i][3].toString(), row, 10); // series
+                tableModel.setValueAt(dataObject[i][4].toString(), row, 13); // power
             } else if (dataObject[i][1].toString().equals("Placa video")) {
                 int row = tableModel.getRowCount();
                 tableModel.addRow(new Object[] {});
@@ -702,6 +705,7 @@ public class Homepage {
                     maxMemoryField.setText(tempRowDataObject[selectedRow][5].toString());
                     numberOfSlotsField.setText(tempRowDataObject[selectedRow][6].toString());
                     memoryFreqField.setText(tempRowDataObject[selectedRow][7].toString());
+                    seriesField.setText(tempRowDataObject[selectedRow][8].toString());
 
 
                 } else if (tempRowDataObject[selectedRow][1].toString().equals("Stocare SSD")) {
@@ -719,7 +723,9 @@ public class Homepage {
                     nameField.setText(tempRowDataObject[selectedRow][0].toString());
                     componentTypeComboBox.setSelectedItem(tempRowDataObject[selectedRow][1].toString());
                     modulationCheckBox.setSelected(tempRowDataObject[selectedRow][2].toString().equals("Da"));
-                    powerField.setText(tempRowDataObject[selectedRow][3].toString());
+                    seriesField.setText(tempRowDataObject[selectedRow][3].toString());
+                    powerField.setText(tempRowDataObject[selectedRow][4].toString());
+
 
                 } else if (tempRowDataObject[selectedRow][1].toString().equals("Placa video")) {
 
@@ -765,19 +771,14 @@ public class Homepage {
             if (name.equals("") || chipset.equals("") || socket.equals("") || memoryType.equals("") || maxMemory.equals("") || memoryFreq.equals("") || series.equals("") || numberOfCores.equals("") || freq.equals("") || power.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
-                for (int i = 0; i < productsDataObject.length; i++) {
-                    if (productsDataObject[i] instanceof Processor && ((Processor) productsDataObject[i]).getName().equals(dataTable.getValueAt(selectedRow, 0).toString())){
-                        ((Processor) productsDataObject[i]).updateProcessor(name, "Procesor" , chipset, socket, memoryType, maxMemory, memoryFreq, series, numberOfCores, freq, power);
-                        JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
-                        errors = false;
-                    }
-                }
-                if (errors) {
-                    popUpInCaseOfError();
+                if (productsRawDataObject[selectedRow][0].equals(dataTable.getValueAt(selectedRow, 0).toString())){
+                    mysqlCon.updateProduct(name, "Procesor", chipset, socket, memoryType, maxMemory, null, memoryFreq, null, null, series, numberOfCores, freq, power, null, null, null, null, null, null);
+                    JOptionPane.showMessageDialog(null, "Datele au fost actualizate cu succes!");
+                    errors = false;
                 }
             }
         } else if (productsRawDataObject[selectedRow][1].toString().equals("Placa de baza")) {
-            if (name.equals("") || chipset.equals("") || socket.equals("") || memoryType.equals("") || maxMemory.equals("") || numberOfSlots.equals("") || memoryFreq.equals("")) {
+            if (name.equals("") || chipset.equals("") || socket.equals("") || memoryType.equals("") || maxMemory.equals("") || numberOfSlots.equals("") || memoryFreq.equals("") || series.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
                 for (int i = 0; i < productsDataObject.length; i++) {
@@ -807,7 +808,7 @@ public class Homepage {
                 }
             }
         } else if (productsRawDataObject[selectedRow][1].toString().equals("Sursa")) {
-            if (name.equals("") || power.equals("")) {
+            if (name.equals("") || power.equals("") || series.equals("")) {
                 JOptionPane.showMessageDialog(null, "Toate campurile sunt obligatorii!");
             } else {
                 for (int i = 0; i < productsDataObject.length; i++) {

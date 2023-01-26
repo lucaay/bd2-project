@@ -158,11 +158,19 @@ class MysqlCon{
         }
         ArrayList<Object> list = new ArrayList<>(Arrays.asList(productsData));
         list.removeIf(Objects::isNull);
-//        for (int i = 0; i < list.size(); i++) {
-//            ArrayList<Object> tempList = new ArrayList<>(Arrays.asList((Object[]) list.get(i)));
-//            System.out.println(tempList.get(0));
-//        }
         return list.toArray(new Object[list.size()]);
+    }
+    public void updateProduct(String name, String componentType, String chipset, String socket, String memoryType, String memoryMax, String memorySlots, String memoryFrequency, String modulation, String memoryFrequencyEffective, String series, String numberOfCores, String freq, String power, String capacity, String ssdType, String readMax, String writeMax, String memorySize, String coolingSystem){
+        try{
+            Connection con=DriverManager.getConnection(
+                    dotenv.get("DATABASE_URL"), dotenv.get("DATABASE_LOGIN"),dotenv.get("DATABASE_PASSWORD"));
+            Statement stmt=con.createStatement();
+            stmt.executeUpdate("update produs set denumire = '" + name + "', chipset = '" + chipset + "', socket = '" + socket + "', tip_memorie = '" + memoryType + "', memorie_maxima = '" + memoryMax + "', numar_sloturi = '" + memorySlots + "', frecventa_memorie = '" + memoryFrequency + "', modulara = '" + modulation + "', frecventa_memorie_efectiva = '" + memoryFrequencyEffective + "', numar_nuclee = '" + numberOfCores + "', frecventa = '" + freq + "', putere = '" + power + "', capacitate = '" + capacity + "', tip_ssd = '" + ssdType + "', citire_maxima = '" + readMax + "', scriere_maxima = '" + writeMax + "', dimensiune_memorie = '" + memorySize + "', sistem_racire = '" + coolingSystem + "' where serie = '" + series + "'");
+            con.close();
+        }catch(Exception e){
+            System.out.println(e);
+            JOptionPane.showMessageDialog(null ,"Eroare la conectarea la baza de date");
+        }
     }
 
     public int getCurrentLoggedInAccountType(){
