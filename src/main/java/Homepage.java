@@ -1,11 +1,19 @@
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.mysql.cj.xdevapi.Table;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.event.*;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Homepage {
     JPanel homePageParentPanel;
@@ -82,6 +90,8 @@ public class Homepage {
     private JTextField memoryEffectiveFreqField;
     private JLabel numberOfProductsLabel;
     private JButton deleteButton;
+    private JButton exportProducts;
+    private JButton exportCart;
 
     DefaultTableModel dataTableModel = (DefaultTableModel) dataTable.getModel();
     DefaultTableModel cartTableModel = (DefaultTableModel) cartTable.getModel();
@@ -96,7 +106,9 @@ public class Homepage {
     private boolean errors = false;
     private boolean addNewProductIsOn = false;
 
+
     public Homepage(ApplicationInterface applicationInterface) {
+
         dataTable.setDefaultEditor(Object.class, null);
         cartTable.setDefaultEditor(Object.class, null);
         hideAllProperties();
@@ -273,6 +285,84 @@ public class Homepage {
                 cartProductsLabel.setText("0 produse");
             }
         });
+        exportProducts.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+                try {
+                    PdfWriter.getInstance(document, new FileOutputStream("iTextTable.pdf"));
+                } catch (DocumentException ex) {
+                    throw new RuntimeException(ex);
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                document.open();
+                PdfPTable table = new PdfPTable(3);
+                addPDFTableHeader(table);
+                addPDFRows(table, dataTableModel);
+
+
+                try {
+                    document.add(table);
+                } catch (DocumentException ex) {
+                    throw new RuntimeException(ex);
+                }
+                document.close();
+                JOptionPane.showMessageDialog(null, "PDF-ul a fost generat cu succes!");
+            }
+        });
+        exportCart.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+                try {
+                    PdfWriter.getInstance(document, new FileOutputStream("iTextTable.pdf"));
+                } catch (DocumentException ex) {
+                    throw new RuntimeException(ex);
+                } catch (FileNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                document.open();
+                PdfPTable table = new PdfPTable(3);
+                addPDFTableHeader(table);
+                addPDFRows(table, cartTableModel);
+
+
+                try {
+                    document.add(table);
+                } catch (DocumentException ex) {
+                    throw new RuntimeException(ex);
+                }
+                document.close();
+                JOptionPane.showMessageDialog(null, "PDF-ul a fost generat cu succes!");
+            }
+        });
+    }
+
+    private void addPDFTableHeader(PdfPTable table) {
+        Stream.of("Denumire", "Tip Componenta", "Chipset", "Socket", "Tip memorie", "Memorie maxima", "Numar sloturi", "Frecventa memorie",
+                        "Modulara", "Frecventa memorie efectiva", "Serie", "Numar nuclee", "Frecventa", "Putere", "Capacitate", "Tip SSD", "Citire maxima",
+                        "Scriere maxima", "Dimensiune memorie", "Sistem racire")
+                .forEach(columnTitle -> {
+                    PdfPCell header = new PdfPCell();
+                    header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    header.setBorderWidth(1);
+                    header.setPhrase(new Phrase(columnTitle));
+                    table.addCell(header);
+                });
+    }
+    private void addPDFRows(PdfPTable table, TableModel dataTable) {
+        for (int i = 0; i < dataTable.getRowCount(); i++) {
+            for (int j = 0; j < dataTable.getColumnCount(); j++) {
+                if (Objects.equals(dataTable.getValueAt(i, j).toString(), "null")){
+                    table.addCell("");
+                }else{
+                    table.addCell(dataTable.getValueAt(i, j).toString());
+                }
+            }
+        }
     }
 
     private void restoreFieldsToDefault(){
